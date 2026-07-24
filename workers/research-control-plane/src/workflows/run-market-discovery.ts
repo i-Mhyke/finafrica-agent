@@ -101,8 +101,12 @@ function checkpointAlreadyPersisted(
 	latest: DiscoveryMarketCheckpoint,
 	desired: DiscoveryMarketCheckpoint,
 ): boolean {
+	const latestPending = latest.pendingAction?.actionId ?? null;
+	const desiredPending = desired.pendingAction?.actionId ?? null;
 	return (
 		latest.state === desired.state &&
+		latest.actionIndex === desired.actionIndex &&
+		latestPending === desiredPending &&
 		latest.progressFingerprint === desired.progressFingerprint &&
 		(latest.terminalResult === null
 			? desired.terminalResult === null
@@ -287,6 +291,30 @@ export async function runMarketDiscoveryLoop(input: {
 			continue;
 		}
 
+		// Resume mid-hop after Workflow step retry: pending attach and/or DO reservation
+		// may already exist even though the step restarted from the top.
+		if (checkpoint.pendingAction !== null) {
+			const pending = checkpoint.pendingAction;
+			await input.store.reserveProviderAction(scope, pending);
+			if (
+				checkpoint.state !== 'search-reserved' &&
+				checkpoint.state !== 'fetch-reserved'
+			) {
+				const beforeCommit = checkpoint;
+				checkpoint = commitReservation(checkpoint, pending.actionId);
+				checkpoint = await persistCheckpoint(input.store, beforeCommit, checkpoint);
+			}
+			checkpoint = await completeProviderHop({
+				input,
+				scope,
+				checkpoint,
+				actionId: pending.actionId,
+				action: pending.action,
+				previousFingerprint,
+			});
+			continue;
+		}
+
 		const decision = await input.flue.runDiscoveryDecision({
 			request: input.request,
 			market: input.market,
@@ -341,91 +369,116 @@ export async function runMarketDiscoveryLoop(input: {
 		checkpoint = commitReservation(checkpoint, supervised.actionId);
 		checkpoint = await persistCheckpoint(input.store, beforeCommit, checkpoint);
 
-		const replay = await input.store.getObservation(scope, supervised.actionId);
-		type ProviderObservation = Omit<FlueProviderActionResult, 'actionId'>;
-		let provider: ProviderObservation | null = replay
-			? {
-					status: 'ok' as const,
-					receipts: replay.receipts ?? [],
-					selectedSourceIds: replay.selectedSourceIds ?? [],
-					selectedSources: replay.selectedSources ?? [],
-					searchQuery: replay.searchQuery,
-					sources: replay.sources ?? [],
-					evidence: replay.evidence ?? [],
-				}
-			: null;
-
-		if (!replay) {
-			provider = await input.flue.runDiscoveryProviderAction({
-				request: input.request,
-				market: input.market,
-				actionId: supervised.actionId,
-				action: supervised.action,
-				searchesUsed: checkpoint.budget.searchesUsed,
-				fetchesUsed: checkpoint.budget.fetchesUsed,
-				marketSearchCount: checkpoint.budget.searchesUsed,
-				selectedSources: await input.store.getSelectedSources(scope),
-			});
-		}
-
-		const beforeObservation = checkpoint;
-		if (provider && provider.status === 'ok') {
-			if (!replay) {
-				await input.store.saveObservation(scope, supervised.actionId, {
-					status: 'completed',
-					receiptIds: provider.receipts.map((receipt) => receipt.receiptId),
-					selectedSourceIds: provider.selectedSourceIds,
-					selectedSources: provider.selectedSources,
-					sourceIds: provider.sources.map((source) => source.sourceId),
-					evidenceIds: provider.evidence.map((evidence) => evidence.evidenceId),
-					searchQuery: provider.searchQuery,
-					receipts: provider.receipts,
-					sources: provider.sources,
-					evidence: provider.evidence,
-				});
-			}
-			checkpoint = transitionDiscovery(checkpoint, {
-				type: 'observation_recorded',
-				actionId: supervised.actionId,
-				receiptIds: provider.receipts.map((receipt) => receipt.receiptId),
-				selectedSourceIds: provider.selectedSourceIds,
-				sourceIds: provider.sources.map((source) => source.sourceId),
-				evidenceIds: provider.evidence.map((evidence) => evidence.evidenceId),
-				searchQuery: provider.searchQuery,
-			});
-		} else if (
-			provider &&
-			(provider.status === 'provider_timeout' ||
-				provider.status === 'provider_rate_limit' ||
-				provider.status === 'provider_error' ||
-				provider.status === 'provider_outcome_unknown')
-		) {
-			if (!replay) {
-				await input.store.saveObservation(scope, supervised.actionId, {
-					status: 'unknown',
-					receiptIds: provider.receipts.map((receipt) => receipt.receiptId),
-					receipts: provider.receipts,
-				});
-			}
-			checkpoint = transitionDiscovery(checkpoint, {
-				type: 'observation_unknown',
-				actionId: supervised.actionId,
-			});
-		} else if (!replay) {
-			checkpoint = transitionDiscovery(checkpoint, { type: 'redirect_recorded' });
-		}
-
-		if (detectNoProgress(checkpoint, previousFingerprint)) {
-			const beforeNoProgress = checkpoint;
-			checkpoint = recordNoProgress(checkpoint, previousFingerprint);
-			checkpoint = await persistCheckpoint(input.store, beforeNoProgress, checkpoint);
-		} else {
-			checkpoint = await persistCheckpoint(input.store, beforeObservation, checkpoint);
-		}
+		checkpoint = await completeProviderHop({
+			input,
+			scope,
+			checkpoint,
+			actionId: supervised.actionId,
+			action: supervised.action,
+			previousFingerprint,
+		});
 	}
 
 	if (!checkpoint.terminalResult) {
 		throw new Error(`Market ${input.market} ended without a terminal result`);
 	}
 	return hydrateTerminalResult(input.store, scope, checkpoint.terminalResult);
+}
+
+async function completeProviderHop(args: {
+	input: {
+		request: DiscoveryRunRequest;
+		market: Market;
+		store: MarketDiscoveryStore;
+		flue: FlueClient;
+	};
+	scope: ReturnType<typeof createScope>;
+	checkpoint: DiscoveryMarketCheckpoint;
+	actionId: string;
+	action: NonNullable<DiscoveryMarketCheckpoint['pendingAction']>['action'];
+	previousFingerprint: string;
+}): Promise<DiscoveryMarketCheckpoint> {
+	const { input, scope, actionId, action, previousFingerprint } = args;
+	let checkpoint = args.checkpoint;
+
+	const replay = await input.store.getObservation(scope, actionId);
+	type ProviderObservation = Omit<FlueProviderActionResult, 'actionId'>;
+	let provider: ProviderObservation | null = replay
+		? {
+				status: 'ok' as const,
+				receipts: replay.receipts ?? [],
+				selectedSourceIds: replay.selectedSourceIds ?? [],
+				selectedSources: replay.selectedSources ?? [],
+				searchQuery: replay.searchQuery,
+				sources: replay.sources ?? [],
+				evidence: replay.evidence ?? [],
+			}
+		: null;
+
+	if (!replay) {
+		provider = await input.flue.runDiscoveryProviderAction({
+			request: input.request,
+			market: input.market,
+			actionId,
+			action,
+			searchesUsed: checkpoint.budget.searchesUsed,
+			fetchesUsed: checkpoint.budget.fetchesUsed,
+			marketSearchCount: checkpoint.budget.searchesUsed,
+			selectedSources: await input.store.getSelectedSources(scope),
+		});
+	}
+
+	const beforeObservation = checkpoint;
+	if (provider && provider.status === 'ok') {
+		if (!replay) {
+			await input.store.saveObservation(scope, actionId, {
+				status: 'completed',
+				receiptIds: provider.receipts.map((receipt) => receipt.receiptId),
+				selectedSourceIds: provider.selectedSourceIds,
+				selectedSources: provider.selectedSources,
+				sourceIds: provider.sources.map((source) => source.sourceId),
+				evidenceIds: provider.evidence.map((evidence) => evidence.evidenceId),
+				searchQuery: provider.searchQuery,
+				receipts: provider.receipts,
+				sources: provider.sources,
+				evidence: provider.evidence,
+			});
+		}
+		checkpoint = transitionDiscovery(checkpoint, {
+			type: 'observation_recorded',
+			actionId,
+			receiptIds: provider.receipts.map((receipt) => receipt.receiptId),
+			selectedSourceIds: provider.selectedSourceIds,
+			sourceIds: provider.sources.map((source) => source.sourceId),
+			evidenceIds: provider.evidence.map((evidence) => evidence.evidenceId),
+			searchQuery: provider.searchQuery,
+		});
+	} else if (
+		provider &&
+		(provider.status === 'provider_timeout' ||
+			provider.status === 'provider_rate_limit' ||
+			provider.status === 'provider_error' ||
+			provider.status === 'provider_outcome_unknown')
+	) {
+		if (!replay) {
+			await input.store.saveObservation(scope, actionId, {
+				status: 'unknown',
+				receiptIds: provider.receipts.map((receipt) => receipt.receiptId),
+				receipts: provider.receipts,
+			});
+		}
+		checkpoint = transitionDiscovery(checkpoint, {
+			type: 'observation_unknown',
+			actionId,
+		});
+	} else if (!replay) {
+		checkpoint = transitionDiscovery(checkpoint, { type: 'redirect_recorded' });
+	}
+
+	if (detectNoProgress(checkpoint, previousFingerprint)) {
+		const beforeNoProgress = checkpoint;
+		checkpoint = recordNoProgress(checkpoint, previousFingerprint);
+		return persistCheckpoint(input.store, beforeNoProgress, checkpoint);
+	}
+	return persistCheckpoint(input.store, beforeObservation, checkpoint);
 }

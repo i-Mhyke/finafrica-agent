@@ -265,10 +265,8 @@ export class ResearchRunRepository {
 			),
 		];
 		if (existing.length > 0) {
-			throw new ResearchRunRepositoryError(
-				'duplicate_action',
-				`Provider action already reserved: ${pending.actionId}`,
-			);
+			// Idempotent: Workflow step retries may re-enter after a partial commit.
+			return;
 		}
 
 		// Single-row reservation. Action type lives in the checkpoint pendingAction;

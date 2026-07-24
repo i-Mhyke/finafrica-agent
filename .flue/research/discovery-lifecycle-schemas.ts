@@ -236,6 +236,8 @@ export function fingerprintDiscoveryProgress(
 ): string {
 	const payload = {
 		state: checkpoint.state,
+		actionIndex: checkpoint.actionIndex,
+		pendingActionId: checkpoint.pendingAction?.actionId ?? null,
 		searchesUsed: checkpoint.budget.searchesUsed,
 		fetchesUsed: checkpoint.budget.fetchesUsed,
 		requestsReserved: checkpoint.budget.requestsReserved,

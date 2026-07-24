@@ -117,7 +117,7 @@ describe('durable discovery state', () => {
 		expect(second.state).toBe(first.state);
 	});
 
-	it('rejects duplicate action reservations', () => {
+	it('treats duplicate action reservations as idempotent for workflow retries', () => {
 		const { repository, scope } = setup();
 		const pending = {
 			actionId: 'scan-1:nigeria:action:1',
@@ -131,9 +131,7 @@ describe('durable discovery state', () => {
 			reservedAt: '2026-07-24T00:00:00Z',
 		};
 		repository.reserveProviderAction(scope, pending);
-		expect(() => repository.reserveProviderAction(scope, pending)).toThrow(
-			ResearchRunRepositoryError,
-		);
+		expect(() => repository.reserveProviderAction(scope, pending)).not.toThrow();
 	});
 
 	it('rejects stale checkpoint revisions', () => {
