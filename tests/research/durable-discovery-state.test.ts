@@ -11,8 +11,10 @@ import {
 import {
 	createScope,
 	createTestRepository,
+	InMemorySqlClient,
 } from '../../workers/research-control-plane/src/state/memory-research-run-store';
 import {
+	ResearchRunRepository,
 	ResearchRunRepositoryError,
 } from '../../workers/research-control-plane/src/state/research-run-repository';
 import type { ProviderCallReceipt } from '../../.flue/research/schemas';
@@ -284,6 +286,7 @@ describe('durable discovery state', () => {
 				},
 			],
 			searchQuery: 'nigeria rates',
+			receipts: [receipt(actionId, 'nigeria')],
 		});
 
 		expect(repository.getSelectedSourceIds(scope)).toEqual(['src_1', 'src_2']);
@@ -301,6 +304,155 @@ describe('durable discovery state', () => {
 				market: 'nigeria',
 			},
 		]);
+		expect(repository.getRetainedArtifacts(scope).receipts).toHaveLength(1);
+	});
+
+	it('limits provider observation persistence to reservation + observation rows', () => {
+		const client = new InMemorySqlClient();
+		let writes = 0;
+		const counting = {
+			exec<T extends Record<string, unknown>>(query: string, ...bindings: unknown[]) {
+				const normalized = query.trim().toUpperCase();
+				if (normalized.startsWith('INSERT') || normalized.startsWith('UPDATE')) {
+					writes += 1;
+				}
+				return client.exec<T>(query, ...bindings);
+			},
+		};
+		const repository = new ResearchRunRepository(counting);
+		const scope = createScope('scan-1', 'nigeria');
+		repository.initRun({
+			runKey: 'scan-1',
+			workflowInstanceId: 'wf-1',
+			market: 'nigeria',
+			maxRequests: 20,
+			maxCostUsd: 5,
+			now: '2026-07-24T00:00:00Z',
+		});
+		writes = 0;
+
+		const actionId = 'scan-1:nigeria:action:1';
+		repository.reserveProviderAction(
+			scope,
+			{
+				actionId,
+				action: {
+					type: 'search',
+					query: 'nigeria rates',
+					vertical: 'monetary-policy',
+					tier: 1,
+					resultCount: 5,
+				},
+				reservedAt: '2026-07-24T00:00:00Z',
+			},
+			'2026-07-24T00:00:01Z',
+		);
+		repository.saveObservation(
+			scope,
+			actionId,
+			{
+				status: 'completed',
+				receiptIds: ['rcpt_1', 'rcpt_2'],
+				sourceIds: ['src_1', 'src_2', 'src_3'],
+				evidenceIds: ['ev_1', 'ev_2'],
+				selectedSourceIds: ['src_1', 'src_2'],
+				selectedSources: [
+					{
+						sourceId: 'src_1',
+						url: 'https://cbn.gov.ng/a',
+						tier: 1,
+						market: 'nigeria',
+					},
+					{
+						sourceId: 'src_2',
+						url: 'https://cbn.gov.ng/b',
+						tier: 1,
+						market: 'nigeria',
+					},
+				],
+				searchQuery: 'nigeria rates',
+				receipts: [receipt('1', 'nigeria'), receipt('2', 'nigeria')],
+				sources: [
+					{
+						sourceId: 'src_1',
+						canonicalUrl: 'https://cbn.gov.ng/a',
+						title: 'A',
+						publisher: null,
+						author: null,
+						publishedAt: null,
+						retrievedAt: '2026-07-24T00:00:01Z',
+						market: 'nigeria',
+						tier: 1,
+						sourceType: 'primary',
+						receiptIds: ['rcpt_1'],
+						contentHash: null,
+						rightsNote: null,
+					},
+					{
+						sourceId: 'src_2',
+						canonicalUrl: 'https://cbn.gov.ng/b',
+						title: 'B',
+						publisher: null,
+						author: null,
+						publishedAt: null,
+						retrievedAt: '2026-07-24T00:00:01Z',
+						market: 'nigeria',
+						tier: 1,
+						sourceType: 'primary',
+						receiptIds: ['rcpt_1'],
+						contentHash: null,
+						rightsNote: null,
+					},
+					{
+						sourceId: 'src_3',
+						canonicalUrl: 'https://cbn.gov.ng/c',
+						title: 'C',
+						publisher: null,
+						author: null,
+						publishedAt: null,
+						retrievedAt: '2026-07-24T00:00:01Z',
+						market: 'nigeria',
+						tier: 1,
+						sourceType: 'primary',
+						receiptIds: ['rcpt_2'],
+						contentHash: null,
+						rightsNote: null,
+					},
+				],
+				evidence: [
+					{
+						evidenceId: 'ev_1',
+						sourceId: 'src_1',
+						text: 'excerpt one',
+						supports: [],
+						capturedAt: '2026-07-24T00:00:01Z',
+					},
+					{
+						evidenceId: 'ev_2',
+						sourceId: 'src_2',
+						text: 'excerpt two',
+						supports: [],
+						capturedAt: '2026-07-24T00:00:01Z',
+					},
+				],
+			},
+			'2026-07-24T00:00:02Z',
+		);
+
+		// 1 reservation insert + 1 observation insert + 1 reservation status update.
+		// Previously this also fanned out into discovery_actions + N artifact tables.
+		expect(writes).toBe(3);
+		expect(repository.getRetainedArtifacts(scope).sources).toHaveLength(3);
+		expect(repository.getRetainedArtifacts(scope).evidence).toHaveLength(2);
+		repository.appendTransition(scope, {
+			transitionId: 't1',
+			fromRevision: 0,
+			toRevision: 1,
+			eventType: 'noop',
+			reason: null,
+			createdAt: '2026-07-24T00:00:03Z',
+		});
+		expect(writes).toBe(3);
 	});
 
 	it('keeps nigeria and ghana checkpoints independent', () => {

@@ -153,6 +153,22 @@ export class InMemorySqlClient implements SqlClient {
 			return [];
 		}
 
+		if (normalized.startsWith('SELECT action_id, payload_json FROM provider_observations')) {
+			const [runKey, market, phase] = bindings;
+			return this.table('provider_observations')
+				.filter(
+					(row) =>
+						row.run_key === runKey && row.market === market && row.phase === phase,
+				)
+				.sort((left, right) =>
+					String(left.action_id).localeCompare(String(right.action_id)),
+				)
+				.map((row) => ({
+					action_id: row.action_id,
+					payload_json: row.payload_json,
+				})) as unknown as T[];
+		}
+
 		if (normalized.startsWith('SELECT payload_json FROM provider_observations')) {
 			const [runKey, market, phase, actionId] = bindings;
 			return this.table('provider_observations')

@@ -251,7 +251,7 @@ export class ResearchRunRepository {
 	reserveProviderAction(
 		scope: ResearchRunScope,
 		pending: DiscoveryPendingAction,
-		now: string,
+		_now: string,
 	): void {
 		const existing = [
 			...this.sql.exec<{ action_id: string }>(
@@ -271,17 +271,8 @@ export class ResearchRunRepository {
 			);
 		}
 
-		this.sql.exec(
-			`INSERT INTO discovery_actions
-			 (run_key, market, phase, action_id, action_json, created_at)
-			 VALUES (?, ?, ?, ?, ?, ?)`,
-			scope.runKey,
-			scope.market,
-			scope.phase,
-			pending.actionId,
-			JSON.stringify(pending.action),
-			now,
-		);
+		// Single-row reservation. Action type lives in the checkpoint pendingAction;
+		// avoid a second discovery_actions write per hop.
 		this.sql.exec(
 			`INSERT INTO provider_reservations
 			 (run_key, market, phase, action_id, reserved_at, status)
@@ -337,6 +328,19 @@ export class ResearchRunRepository {
 			return 'existing';
 		}
 
+		for (const receipt of payload.receipts ?? []) {
+			this.assertArtifactScope(scope, receipt.market);
+		}
+		for (const source of payload.sources ?? []) {
+			this.assertArtifactScope(scope, source.market);
+		}
+		for (const selected of payload.selectedSources ?? []) {
+			this.assertArtifactScope(scope, selected.market);
+		}
+
+		// One observation row holds receipts/sources/evidence/selectedSources.
+		// Avoid fan-out inserts into provider_receipts / source_records /
+		// evidence_records / selected_search_results (N writes per provider hop).
 		this.sql.exec(
 			`INSERT INTO provider_observations
 			 (run_key, market, phase, action_id, status, payload_json, observed_at)
@@ -360,19 +364,6 @@ export class ResearchRunRepository {
 			scope.phase,
 			actionId,
 		);
-
-		for (const receipt of payload.receipts ?? []) {
-			this.insertReceipt(scope, actionId, receipt, now);
-		}
-		for (const source of payload.sources ?? []) {
-			this.insertSource(scope, source, now);
-		}
-		for (const evidence of payload.evidence ?? []) {
-			this.insertEvidence(scope, evidence, now);
-		}
-		for (const selected of payload.selectedSources ?? []) {
-			this.insertSelectedSource(scope, selected, payload.searchQuery ?? '', now);
-		}
 
 		return 'inserted';
 	}
@@ -402,7 +393,35 @@ export class ResearchRunRepository {
 		return this.getSelectedSources(scope).map((source) => source.sourceId);
 	}
 
+	listObservations(scope: ResearchRunScope): ProviderObservationPayload[] {
+		const rows = [
+			...this.sql.exec<{ action_id: string; payload_json: string }>(
+				`SELECT action_id, payload_json
+				 FROM provider_observations
+				 WHERE run_key = ? AND market = ? AND phase = ?
+				 ORDER BY action_id ASC`,
+				scope.runKey,
+				scope.market,
+				scope.phase,
+			),
+		];
+		return rows.map((row) => JSON.parse(row.payload_json) as ProviderObservationPayload);
+	}
+
 	getSelectedSources(scope: ResearchRunScope): SelectedSearchSource[] {
+		const fromObservations = new Map<string, SelectedSearchSource>();
+		for (const observation of this.listObservations(scope)) {
+			for (const selected of observation.selectedSources ?? []) {
+				fromObservations.set(selected.sourceId, selected);
+			}
+		}
+		if (fromObservations.size > 0) {
+			return [...fromObservations.values()].sort((left, right) =>
+				left.sourceId.localeCompare(right.sourceId),
+			);
+		}
+
+		// Legacy rows written before observation-payload consolidation.
 		const rows = [
 			...this.sql.exec<{ source_id: string; selection_json: string }>(
 				`SELECT source_id, selection_json
@@ -422,8 +441,25 @@ export class ResearchRunRepository {
 		sources: SourceRecord[];
 		evidence: EvidenceExcerpt[];
 	} {
-		const receipts = [
-			...this.sql.exec<{ receipt_json: string }>(
+		const receiptsById = new Map<string, ProviderCallReceipt>();
+		const sourcesById = new Map<string, SourceRecord>();
+		const evidenceById = new Map<string, EvidenceExcerpt>();
+
+		for (const observation of this.listObservations(scope)) {
+			for (const receipt of observation.receipts ?? []) {
+				receiptsById.set(receipt.receiptId, receipt);
+			}
+			for (const source of observation.sources ?? []) {
+				sourcesById.set(source.sourceId, source);
+			}
+			for (const evidence of observation.evidence ?? []) {
+				evidenceById.set(evidence.evidenceId, evidence);
+			}
+		}
+
+		// Legacy fan-out tables (pre-consolidation runs).
+		if (receiptsById.size === 0) {
+			for (const row of this.sql.exec<{ receipt_json: string }>(
 				`SELECT receipt_json
 				 FROM provider_receipts
 				 WHERE run_key = ? AND market = ? AND phase = ?
@@ -431,11 +467,13 @@ export class ResearchRunRepository {
 				scope.runKey,
 				scope.market,
 				scope.phase,
-			),
-		].map((row) => JSON.parse(row.receipt_json) as ProviderCallReceipt);
-
-		const sources = [
-			...this.sql.exec<{ source_json: string }>(
+			)) {
+				const receipt = JSON.parse(row.receipt_json) as ProviderCallReceipt;
+				receiptsById.set(receipt.receiptId, receipt);
+			}
+		}
+		if (sourcesById.size === 0) {
+			for (const row of this.sql.exec<{ source_json: string }>(
 				`SELECT source_json
 				 FROM source_records
 				 WHERE run_key = ? AND market = ? AND phase = ?
@@ -443,11 +481,13 @@ export class ResearchRunRepository {
 				scope.runKey,
 				scope.market,
 				scope.phase,
-			),
-		].map((row) => JSON.parse(row.source_json) as SourceRecord);
-
-		const evidence = [
-			...this.sql.exec<{ evidence_json: string }>(
+			)) {
+				const source = JSON.parse(row.source_json) as SourceRecord;
+				sourcesById.set(source.sourceId, source);
+			}
+		}
+		if (evidenceById.size === 0) {
+			for (const row of this.sql.exec<{ evidence_json: string }>(
 				`SELECT evidence_json
 				 FROM evidence_records
 				 WHERE run_key = ? AND market = ? AND phase = ?
@@ -455,10 +495,23 @@ export class ResearchRunRepository {
 				scope.runKey,
 				scope.market,
 				scope.phase,
-			),
-		].map((row) => JSON.parse(row.evidence_json) as EvidenceExcerpt);
+			)) {
+				const evidence = JSON.parse(row.evidence_json) as EvidenceExcerpt;
+				evidenceById.set(evidence.evidenceId, evidence);
+			}
+		}
 
-		return { receipts, sources, evidence };
+		return {
+			receipts: [...receiptsById.values()].sort((left, right) =>
+				left.receiptId.localeCompare(right.receiptId),
+			),
+			sources: [...sourcesById.values()].sort((left, right) =>
+				left.sourceId.localeCompare(right.sourceId),
+			),
+			evidence: [...evidenceById.values()].sort((left, right) =>
+				left.evidenceId.localeCompare(right.evidenceId),
+			),
+		};
 	}
 
 	assertArtifactScope(scope: ResearchRunScope, artifactMarket: Market): void {
@@ -471,91 +524,11 @@ export class ResearchRunRepository {
 	}
 
 	appendTransition(
-		scope: ResearchRunScope,
-		transition: StateTransitionRecord,
+		_scope: ResearchRunScope,
+		_transition: StateTransitionRecord,
 	): void {
-		this.sql.exec(
-			`INSERT INTO state_transitions
-			 (run_key, market, phase, transition_id, transition_json, created_at)
-			 VALUES (?, ?, ?, ?, ?, ?)`,
-			scope.runKey,
-			scope.market,
-			scope.phase,
-			transition.transitionId,
-			JSON.stringify(transition),
-			transition.createdAt,
-		);
-	}
-
-	private insertReceipt(
-		scope: ResearchRunScope,
-		actionId: string,
-		receipt: ProviderCallReceipt,
-		now: string,
-	): void {
-		this.assertArtifactScope(scope, receipt.market);
-		this.sql.exec(
-			`INSERT OR IGNORE INTO provider_receipts
-			 (run_key, market, phase, receipt_id, receipt_json, action_id, created_at)
-			 VALUES (?, ?, ?, ?, ?, ?, ?)`,
-			scope.runKey,
-			scope.market,
-			scope.phase,
-			receipt.receiptId,
-			JSON.stringify(receipt),
-			actionId,
-			now,
-		);
-	}
-
-	private insertSource(scope: ResearchRunScope, source: SourceRecord, now: string): void {
-		this.assertArtifactScope(scope, source.market);
-		this.sql.exec(
-			`INSERT OR IGNORE INTO source_records
-			 (run_key, market, phase, source_id, source_json, created_at)
-			 VALUES (?, ?, ?, ?, ?, ?)`,
-			scope.runKey,
-			scope.market,
-			scope.phase,
-			source.sourceId,
-			JSON.stringify(source),
-			now,
-		);
-	}
-
-	private insertEvidence(scope: ResearchRunScope, evidence: EvidenceExcerpt, now: string): void {
-		this.sql.exec(
-			`INSERT OR IGNORE INTO evidence_records
-			 (run_key, market, phase, evidence_id, evidence_json, created_at)
-			 VALUES (?, ?, ?, ?, ?, ?)`,
-			scope.runKey,
-			scope.market,
-			scope.phase,
-			evidence.evidenceId,
-			JSON.stringify(evidence),
-			now,
-		);
-	}
-
-	private insertSelectedSource(
-		scope: ResearchRunScope,
-		selected: SelectedSearchSource,
-		searchQuery: string,
-		now: string,
-	): void {
-		this.assertArtifactScope(scope, selected.market);
-		this.sql.exec(
-			`INSERT OR IGNORE INTO selected_search_results
-			 (run_key, market, phase, source_id, selection_json, search_query, selected_at)
-			 VALUES (?, ?, ?, ?, ?, ?, ?)`,
-			scope.runKey,
-			scope.market,
-			scope.phase,
-			selected.sourceId,
-			JSON.stringify(selected),
-			searchQuery,
-			now,
-		);
+		// Intentionally no-op: transition logs are debug-only write amp.
+		// Checkpoint revision + observation payloads are the durable resume source of truth.
 	}
 }
 

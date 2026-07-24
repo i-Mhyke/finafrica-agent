@@ -226,6 +226,8 @@ Service-binding path verified (no `FLUE_EXECUTION_BASE_URL` on control plane).
 | OPEN-005 | ~~Uncommitted durable code~~ | **Fixed:** pushed `efaebc8`, `cb2fa31` |
 | OPEN-006 | ~~Prod durability test~~ | **Fixed:** redeploy CP at poll 20; `6226e4bf-…` resumed → `complete` (~3m17s) |
 | OPEN-007 | Audit export for durable discovery | Continue run id ≠ runKey; export via `run_<continue-workflow-id>` |
+| OPEN-008 | Flue DO per discovery micro-step | Biggest remaining `rows_written` amp — batch/in-process actions instead of Workflow DO per hop |
+| OPEN-009 | ~~Control-plane artifact fan-out writes~~ | **Fixed:** one observation payload per action; no discovery_actions / artifact table fan-out; transition log no-op |
 
 ---
 
@@ -234,3 +236,4 @@ Service-binding path verified (no `FLUE_EXECUTION_BASE_URL` on control plane).
 | Date | Change |
 |------|--------|
 | 2026-07-25 | Prod durability: CP redeploy mid-scan; workflow resumed to `complete` |
+| 2026-07-25 | Write-amp: collapse observation fan-out; slim terminal checkpoint; no-op transitions |

@@ -16,7 +16,10 @@ CREATE TABLE IF NOT EXISTS market_checkpoints (
 	PRIMARY KEY (run_key, market, phase)
 );
 
-CREATE TABLE IF NOT EXISTS discovery_actions (
+-- Legacy fan-out tables (provider_receipts, source_records, evidence_records,
+-- selected_search_results, discovery_actions, state_transitions) remain for
+-- schema compatibility / old runs. New observations store artifacts in
+-- provider_observations.payload_json only.
 	run_key TEXT NOT NULL,
 	market TEXT NOT NULL,
 	phase TEXT NOT NULL DEFAULT 'discovery',

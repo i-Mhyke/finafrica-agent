@@ -59,3 +59,14 @@ See issue log for full detail. Quick list:
 3. After Flue migration tag bumps, clear `agent/.wrangler/state` and restart `npm run dev`.
 4. Do not kill local control-plane wrangler to test durability — workflow orphans (ISSUE-013).
 5. Use `scan.json.example` as template; local `scan.json` is gitignored.
+
+## DO write budget (prod)
+
+Control-plane persistence is optimized for resume, not full audit replay:
+
+- One `provider_reservations` row + one `provider_observations` payload per action (artifacts embedded).
+- Checkpoint terminal results omit artifact bodies; hydrated from observations on return.
+- `state_transitions` are not written.
+- Legacy fan-out tables remain readable for older runs.
+
+Largest remaining prod `rows_written` cost is Flue Workflow DOs per discovery micro-step (see OPEN-008). Workers Paid is still required for scheduled prod load.

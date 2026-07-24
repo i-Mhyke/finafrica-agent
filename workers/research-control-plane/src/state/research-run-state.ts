@@ -153,15 +153,14 @@ export class ResearchRunState extends DurableObject<Env> {
 		return this.repository.getCheckpoint(runKey, market);
 	}
 
-	async saveCheckpoint(
-		checkpoint: DiscoveryMarketCheckpoint,
-		expectedRevision: number,
-	): Promise<DiscoveryMarketCheckpoint> {
+	async saveObservation(
+		scope: ResearchRunScope,
+		actionId: string,
+		payload: ProviderObservationPayload,
+	): Promise<'inserted' | 'existing'> {
 		this.ensureSchema();
-		return this.repository.compareAndSwapCheckpoint(
-			checkpoint,
-			expectedRevision,
-			new Date().toISOString(),
+		return this.ctx.storage.transactionSync(() =>
+			this.repository.saveObservation(scope, actionId, payload, new Date().toISOString()),
 		);
 	}
 
@@ -170,16 +169,23 @@ export class ResearchRunState extends DurableObject<Env> {
 		pending: DiscoveryPendingAction,
 	): Promise<void> {
 		this.ensureSchema();
-		this.repository.reserveProviderAction(scope, pending, new Date().toISOString());
+		this.ctx.storage.transactionSync(() => {
+			this.repository.reserveProviderAction(scope, pending, new Date().toISOString());
+		});
 	}
 
-	async saveObservation(
-		scope: ResearchRunScope,
-		actionId: string,
-		payload: ProviderObservationPayload,
-	): Promise<'inserted' | 'existing'> {
+	async saveCheckpoint(
+		checkpoint: DiscoveryMarketCheckpoint,
+		expectedRevision: number,
+	): Promise<DiscoveryMarketCheckpoint> {
 		this.ensureSchema();
-		return this.repository.saveObservation(scope, actionId, payload, new Date().toISOString());
+		return this.ctx.storage.transactionSync(() =>
+			this.repository.compareAndSwapCheckpoint(
+				checkpoint,
+				expectedRevision,
+				new Date().toISOString(),
+			),
+		);
 	}
 
 	async getObservation(

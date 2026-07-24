@@ -174,6 +174,30 @@ async function persistCheckpoint(
 	);
 }
 
+function compactTerminalResult(result: MarketDiscoveryResult): MarketDiscoveryResult {
+	return {
+		...result,
+		// Artifacts are reconstructed from observation payloads on resume/return.
+		receipts: [],
+		sources: [],
+		evidence: [],
+	};
+}
+
+async function hydrateTerminalResult(
+	store: MarketDiscoveryStore,
+	scope: ReturnType<typeof createScope>,
+	result: MarketDiscoveryResult,
+): Promise<MarketDiscoveryResult> {
+	const retained = await store.getRetainedArtifacts(scope);
+	return {
+		...result,
+		receipts: retained.receipts.length > 0 ? retained.receipts : result.receipts,
+		sources: retained.sources.length > 0 ? retained.sources : result.sources,
+		evidence: retained.evidence.length > 0 ? retained.evidence : result.evidence,
+	};
+}
+
 async function applySupervisedTerminal(
 	store: MarketDiscoveryStore,
 	checkpoint: DiscoveryMarketCheckpoint,
@@ -185,7 +209,8 @@ async function applySupervisedTerminal(
 		const before = checkpoint;
 		const next = transitionDiscovery(checkpoint, {
 			type: 'terminal_accepted',
-			result: supervised.result,
+			// Checkpoint keeps coverage + briefs; hydrate artifacts from observations on resume.
+			result: compactTerminalResult(supervised.result),
 		});
 		return { checkpoint: await persistCheckpoint(store, before, next), done: true };
 	}
@@ -232,7 +257,7 @@ export async function runMarketDiscoveryLoop(input: {
 		}));
 
 	if (checkpoint.terminalResult) {
-		return checkpoint.terminalResult;
+		return hydrateTerminalResult(input.store, scope, checkpoint.terminalResult);
 	}
 
 	while (!isTerminalDiscoveryState(checkpoint.state)) {
@@ -402,5 +427,5 @@ export async function runMarketDiscoveryLoop(input: {
 	if (!checkpoint.terminalResult) {
 		throw new Error(`Market ${input.market} ended without a terminal result`);
 	}
-	return checkpoint.terminalResult;
+	return hydrateTerminalResult(input.store, scope, checkpoint.terminalResult);
 }
