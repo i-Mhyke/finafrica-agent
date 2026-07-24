@@ -207,7 +207,11 @@ Discovery provider spend for durable mode is **not** in continue audit exports �
 |-----|--------|-------------------|--------|-----------|
 | prod smoke | `scan-prod-durable-2026-07-24-001` | `51e9b165-39e8-40d1-bfd0-2ae65f0e0d9b` | `complete` | ~3m18s |
 
-Service-binding path verified (no `FLUE_EXECUTION_BASE_URL` on control plane). Durability injection on deployed workflow still pending (OPEN-006).
+Service-binding path verified (no `FLUE_EXECUTION_BASE_URL` on control plane).
+
+| Run | runKey | workflowInstanceId | Injection | Result | Wall time |
+|-----|--------|-------------------|-----------|--------|-----------|
+| prod durability | `scan-prod-durability-2026-07-24-002` | `6226e4bf-8101-457d-80b0-7ecc4f6dac29` | CP redeploy @ poll 20 (~43s) | `complete` | ~3m17s |
 
 ---
 
@@ -219,8 +223,8 @@ Service-binding path verified (no `FLUE_EXECUTION_BASE_URL` on control plane). D
 | OPEN-002 | ~~CLI exit code on `errored` workflow~~ | **Fixed:** `watchScan` throws; CLI exits 1 |
 | OPEN-003 | Flue outage during discovery | Define retry/backoff policy when Flue returns 5xx mid-loop |
 | OPEN-004 | Durable eval suite | `evals/research/durable-discovery-evaluator.mjs` still stub |
-| OPEN-005 | Uncommitted durable code | Local fixes on branch; commit + push after review |
-| OPEN-006 | Prod durability test | Inject restart on deployed control plane + remote workflow resume |
+| OPEN-005 | ~~Uncommitted durable code~~ | **Fixed:** pushed `efaebc8`, `cb2fa31` |
+| OPEN-006 | ~~Prod durability test~~ | **Fixed:** redeploy CP at poll 20; `6226e4bf-…` resumed → `complete` (~3m17s) |
 | OPEN-007 | Audit export for durable discovery | Continue run id ≠ runKey; export via `run_<continue-workflow-id>` |
 
 ---
@@ -229,4 +233,4 @@ Service-binding path verified (no `FLUE_EXECUTION_BASE_URL` on control plane). D
 
 | Date | Change |
 |------|--------|
-| 2026-07-24 | Prod deploy: both workers live; smoke scan `complete` via service binding |
+| 2026-07-25 | Prod durability: CP redeploy mid-scan; workflow resumed to `complete` |
