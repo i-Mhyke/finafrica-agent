@@ -6,12 +6,19 @@ import {
 
 export class InMemorySqlClient implements SqlClient {
 	private readonly tables = new Map<string, Array<Record<string, unknown>>>();
+	private lastChanges = 0;
 
 	exec<T extends Record<string, unknown>>(
 		query: string,
 		...bindings: unknown[]
 	): Iterable<T> {
 		const normalized = query.trim().replace(/\s+/g, ' ');
+
+		if (normalized.startsWith('SELECT changes()')) {
+			return [{ changes: this.lastChanges }] as unknown as T[];
+		}
+
+		this.lastChanges = 0;
 
 		if (normalized.startsWith('INSERT OR IGNORE INTO discovery_runs')) {
 			const [runKey, workflowInstanceId, createdAt] = bindings;
@@ -22,6 +29,7 @@ export class InMemorySqlClient implements SqlClient {
 					workflow_instance_id: workflowInstanceId,
 					created_at: createdAt,
 				});
+				this.lastChanges = 1;
 			}
 			return [];
 		}
@@ -43,6 +51,7 @@ export class InMemorySqlClient implements SqlClient {
 					terminal_committed: 0,
 					updated_at: updatedAt,
 				});
+				this.lastChanges = 1;
 			}
 			return [];
 		}
@@ -58,6 +67,7 @@ export class InMemorySqlClient implements SqlClient {
 				terminal_committed: 0,
 				updated_at: updatedAt,
 			});
+			this.lastChanges = 1;
 			return [];
 		}
 
@@ -104,6 +114,7 @@ export class InMemorySqlClient implements SqlClient {
 					row.revision === expectedRevision,
 			);
 			if (index === -1) {
+				this.lastChanges = 0;
 				return [];
 			}
 			rows[index] = {
@@ -113,7 +124,12 @@ export class InMemorySqlClient implements SqlClient {
 				terminal_committed: terminalCommitted,
 				updated_at: updatedAt,
 			};
-			return [{ updated: 1 }] as unknown as T[];
+			this.lastChanges = 1;
+			return [];
+		}
+
+		if (normalized.startsWith('SELECT changes()')) {
+			return [{ changes: this.lastChanges }] as unknown as T[];
 		}
 
 		if (normalized.startsWith('SELECT action_id FROM provider_reservations')) {
@@ -150,6 +166,7 @@ export class InMemorySqlClient implements SqlClient {
 				reserved_at: bindings[4],
 				status: bindings[5] ?? 'reserved',
 			});
+			this.lastChanges = 1;
 			return [];
 		}
 
@@ -192,6 +209,7 @@ export class InMemorySqlClient implements SqlClient {
 				payload_json: bindings[5],
 				observed_at: bindings[6],
 			});
+			this.lastChanges = 1;
 			return [];
 		}
 
@@ -206,6 +224,7 @@ export class InMemorySqlClient implements SqlClient {
 			);
 			if (row) {
 				row.status = status;
+				this.lastChanges = 1;
 			}
 			return [];
 		}

@@ -206,7 +206,7 @@ export class ResearchRunRepository {
 				? 1
 				: 0;
 
-		const updated = this.sql.exec(
+		this.sql.exec(
 			`UPDATE market_checkpoints
 			 SET revision = ?, checkpoint_json = ?, terminal_committed = ?, updated_at = ?
 			 WHERE run_key = ? AND market = ? AND phase = ? AND revision = ?`,
@@ -220,7 +220,12 @@ export class ResearchRunRepository {
 			expectedRevision,
 		);
 
-		if ([...updated].length === 0) {
+		// DO SQLite UPDATE cursors are empty; use changes() so we don't throw-and-rollback
+		// a successful write inside transactionSync.
+		const changed = [
+			...this.sql.exec<{ changes: number }>(`SELECT changes() AS changes`),
+		][0]?.changes;
+		if (!changed) {
 			throw new ResearchRunRepositoryError(
 				'stale_revision',
 				'Checkpoint compare-and-swap failed',
