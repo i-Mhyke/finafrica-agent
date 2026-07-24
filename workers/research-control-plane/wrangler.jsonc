@@ -30,5 +30,12 @@
 			"binding": "PUBLICATION_AGENT",
 			"service": "publication-agent"
 		}
-	]
+	],
+	"env": {
+		"local": {
+			"vars": {
+				"FLUE_EXECUTION_BASE_URL": "http://127.0.0.1:3583"
+			}
+		}
+	}
 }

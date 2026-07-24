@@ -18,8 +18,11 @@ import {
 import fixtureEvents from '../fixtures/research/flue-run-events.json';
 import productionShapeEvents from '../fixtures/research/flue-run-events-production-shape.json';
 import {
+	isTerminalDurableScanStatus,
+	resolveDurableScanPollConfig,
 	resolveScanMode,
 } from '../../scripts/lib/durable-research-run-feed.mjs';
+import { watchScan } from '../../scripts/run-research-scan.mjs';
 
 function mockClient({
 	runRecord,
@@ -906,5 +909,59 @@ describe('research audit sdk integration fixture', () => {
 		if (previous) {
 			process.env.RESEARCH_SCAN_MODE = previous;
 		}
+	});
+
+	it('treats Cloudflare workflow terminal statuses as durable scan completion', () => {
+		expect(isTerminalDurableScanStatus('complete')).toBe(true);
+		expect(isTerminalDurableScanStatus('errored')).toBe(true);
+		expect(isTerminalDurableScanStatus('terminated')).toBe(true);
+		expect(isTerminalDurableScanStatus('running')).toBe(false);
+	});
+
+	it('resolves durable scan polling from env', () => {
+		const previousSeconds = process.env.RESEARCH_SCAN_POLL_SECONDS;
+		process.env.RESEARCH_SCAN_POLL_SECONDS = '120';
+		expect(resolveDurableScanPollConfig()).toEqual({
+			maxAttempts: 120,
+			pollIntervalMs: 1000,
+		});
+		if (previousSeconds) {
+			process.env.RESEARCH_SCAN_POLL_SECONDS = previousSeconds;
+		} else {
+			delete process.env.RESEARCH_SCAN_POLL_SECONDS;
+		}
+	});
+
+	it('watchScan returns when durable workflow reports complete', async () => {
+		const pollDurableScan = vi
+			.fn()
+			.mockResolvedValueOnce({ status: 'running' })
+			.mockResolvedValueOnce({ status: 'complete', output: { ok: true } });
+		const { report } = await watchScan(
+			{ workflowInstanceId: 'wf-1' },
+			{
+				mode: 'durable',
+				pollSeconds: 5,
+				pollIntervalMs: 1,
+				pollDurableScan,
+			},
+		);
+		expect(report.status).toBe('complete');
+		expect(pollDurableScan).toHaveBeenCalledTimes(2);
+	});
+
+	it('watchScan throws when durable workflow reports errored', async () => {
+		const pollDurableScan = vi.fn().mockResolvedValue({ status: 'errored', error: 'boom' });
+		await expect(
+			watchScan(
+				{ workflowInstanceId: 'wf-2' },
+				{
+					mode: 'durable',
+					pollSeconds: 5,
+					pollIntervalMs: 1,
+					pollDurableScan,
+				},
+			),
+		).rejects.toThrow(/status: errored/);
 	});
 });

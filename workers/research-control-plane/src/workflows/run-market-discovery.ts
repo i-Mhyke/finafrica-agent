@@ -20,11 +20,14 @@ import {
 import type { FlueClient, FlueProviderActionResult } from '../flue-client';
 import {
 	createScope,
+	ResearchRunRepositoryError,
 	type ProviderObservationPayload,
 	type ResearchRunRepository,
 	type SelectedSearchSource,
 } from '../state/research-run-repository';
 import { isTerminalDiscoveryState } from '../env';
+
+const MAX_CHECKPOINT_PERSIST_ATTEMPTS = 8;
 
 export interface MarketDiscoveryStore {
 	initMarket(input: {
@@ -80,12 +83,95 @@ export function createMarketDiscoveryStore(repository: ResearchRunRepository): M
 	};
 }
 
-function persistCheckpoint(
+function isStaleRevisionError(error: unknown): boolean {
+	if (error instanceof ResearchRunRepositoryError) {
+		return error.code === 'stale_revision' || error.code === 'terminal_committed';
+	}
+	if (error instanceof Error) {
+		return (
+			error.message.includes('Checkpoint compare-and-swap failed') ||
+			error.message.includes('Stale checkpoint revision') ||
+			error.message.includes('Terminal checkpoint cannot be overwritten')
+		);
+	}
+	return false;
+}
+
+function checkpointAlreadyPersisted(
+	latest: DiscoveryMarketCheckpoint,
+	desired: DiscoveryMarketCheckpoint,
+): boolean {
+	return (
+		latest.state === desired.state &&
+		latest.progressFingerprint === desired.progressFingerprint &&
+		(latest.terminalResult === null
+			? desired.terminalResult === null
+			: desired.terminalResult !== null)
+	);
+}
+
+function mergeCheckpointForRetry(
+	latest: DiscoveryMarketCheckpoint,
+	desired: DiscoveryMarketCheckpoint,
+): DiscoveryMarketCheckpoint {
+	return {
+		...desired,
+		revision: latest.revision + 1,
+		actionIndex: Math.max(latest.actionIndex, desired.actionIndex),
+		finalizationRepairCount: Math.max(
+			latest.finalizationRepairCount,
+			desired.finalizationRepairCount,
+		),
+		noProgressCount: Math.max(latest.noProgressCount, desired.noProgressCount),
+		budget: {
+			...desired.budget,
+			searchesUsed: Math.max(latest.budget.searchesUsed, desired.budget.searchesUsed),
+			fetchesUsed: Math.max(latest.budget.fetchesUsed, desired.budget.fetchesUsed),
+			requestsReserved: Math.max(
+				latest.budget.requestsReserved,
+				desired.budget.requestsReserved,
+			),
+			admittedCostUsd: Math.max(latest.budget.admittedCostUsd, desired.budget.admittedCostUsd),
+			actualCostUsd: Math.max(latest.budget.actualCostUsd, desired.budget.actualCostUsd),
+		},
+	};
+}
+
+async function persistCheckpoint(
 	store: MarketDiscoveryStore,
 	before: DiscoveryMarketCheckpoint,
 	after: DiscoveryMarketCheckpoint,
-): Promise<DiscoveryMarketCheckpoint> | DiscoveryMarketCheckpoint {
-	return store.saveCheckpoint(after, before.revision);
+): Promise<DiscoveryMarketCheckpoint> {
+	let expectedRevision = before.revision;
+	let pending = after;
+
+	for (let attempt = 0; attempt < MAX_CHECKPOINT_PERSIST_ATTEMPTS; attempt += 1) {
+		try {
+			return await store.saveCheckpoint(pending, expectedRevision);
+		} catch (error) {
+			if (!isStaleRevisionError(error)) {
+				throw error;
+			}
+
+			const latest = await store.getCheckpoint(pending.runKey, pending.market);
+			if (!latest) {
+				throw error;
+			}
+			if (isTerminalDiscoveryState(latest.state)) {
+				return latest;
+			}
+			if (checkpointAlreadyPersisted(latest, pending)) {
+				return latest;
+			}
+
+			expectedRevision = latest.revision;
+			pending = mergeCheckpointForRetry(latest, pending);
+		}
+	}
+
+	throw new Error(
+		`Checkpoint persist failed after ${MAX_CHECKPOINT_PERSIST_ATTEMPTS} attempts for ${after.market}`,
+	);
 }
 
 async function applySupervisedTerminal(

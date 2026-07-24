@@ -96,6 +96,25 @@ describe('durable discovery state', () => {
 		expect(repository.getObservation(scope, actionId)).toEqual(payload);
 	});
 
+	it('initRun tolerates concurrent market initialization', () => {
+		const { repository } = setup();
+		const input = {
+			runKey: 'scan-1',
+			workflowInstanceId: 'wf-1',
+			market: 'nigeria' as const,
+			maxRequests: 20,
+			maxCostUsd: 5,
+			now: '2026-07-24T00:00:00Z',
+		};
+		const first = repository.initRun(input);
+		const second = repository.initRun({
+			...input,
+			now: '2026-07-24T00:00:01Z',
+		});
+		expect(second.revision).toBe(first.revision);
+		expect(second.state).toBe(first.state);
+	});
+
 	it('rejects duplicate action reservations', () => {
 		const { repository, scope } = setup();
 		const pending = {

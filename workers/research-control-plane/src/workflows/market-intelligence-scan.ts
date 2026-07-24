@@ -33,6 +33,7 @@ export class MarketIntelligenceScanWorkflow extends WorkflowEntrypoint<Env> {
 			const flue = createFlueServiceClient(
 				this.env.PUBLICATION_AGENT,
 				this.env.RESEARCH_ADMIN_TOKEN,
+				{ executionBaseUrl: this.env.FLUE_EXECUTION_BASE_URL },
 			);
 			await flue.continueMarketIntelligenceScan({
 				request,
@@ -57,6 +58,7 @@ export class MarketIntelligenceScanWorkflow extends WorkflowEntrypoint<Env> {
 		const flue = createFlueServiceClient(
 			this.env.PUBLICATION_AGENT,
 			this.env.RESEARCH_ADMIN_TOKEN,
+			{ executionBaseUrl: this.env.FLUE_EXECUTION_BASE_URL },
 		);
 		return runMarketDiscoveryLoop({
 			request,

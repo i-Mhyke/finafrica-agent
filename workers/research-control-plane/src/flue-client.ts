@@ -76,21 +76,29 @@ export interface FlueClient {
 	}): Promise<unknown>;
 }
 
-export function createFlueServiceClient(fetcher: Fetcher, adminToken: string): FlueClient {
+export function createFlueServiceClient(
+	fetcher: Fetcher,
+	adminToken: string,
+	options: { executionBaseUrl?: string } = {},
+): FlueClient {
 	async function invokeWorkflow<T>(workflowName: string, input: unknown): Promise<T> {
-		const response = await fetcher.fetch(
-			`https://publication-agent.internal/workflows/${workflowName}?wait=result`,
-			{
-				method: 'POST',
-				headers: {
-					Authorization: `Bearer ${adminToken}`,
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(input),
+		const url = `${options.executionBaseUrl ?? 'https://publication-agent.internal'}/workflows/${workflowName}?wait=result`;
+		const init: RequestInit = {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${adminToken}`,
+				'Content-Type': 'application/json',
 			},
-		);
+			body: JSON.stringify(input),
+		};
+		const response = options.executionBaseUrl
+			? await fetch(url, init)
+			: await fetcher.fetch(url, init);
 		if (!response.ok) {
-			throw new Error(`Flue workflow ${workflowName} failed: ${response.status}`);
+			const detail = (await response.text()).slice(0, 500);
+			throw new Error(
+				`Flue workflow ${workflowName} failed: ${response.status} ${response.statusText}${detail ? ` — ${detail}` : ''}`,
+			);
 		}
 		const payload = (await response.json()) as { result?: T } & T;
 		return (payload.result ?? payload) as T;

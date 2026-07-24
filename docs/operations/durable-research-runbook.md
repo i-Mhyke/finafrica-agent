@@ -1,5 +1,7 @@
 # Durable Research Runbook
 
+**Issue log:** [durable-discovery-issue-log.md](./durable-discovery-issue-log.md) — observed failures, fixes, and open decisions.
+
 ## Modes
 
 - `legacy` (default): `POST /workflows/market-intelligence-scan` on the Flue worker.
@@ -26,12 +28,34 @@ Rollback is configuration-only: set `RESEARCH_SCAN_MODE=legacy` (or unset it). N
 
 ## Operations
 
+- Deploy Flue worker first: `npm run deploy` (secrets via `wrangler secret bulk .dev.vars` on first deploy)
 - Deploy control plane: `npm run control-plane:deploy`
-- Dry-run: `npm run control-plane:deploy:dry-run`
-- Local dev: `npm run control-plane:dev`
+- Set `RESEARCH_ADMIN_TOKEN` on both workers (same value, ≥32 bytes)
+- Dry-run: `npm run deploy:dry-run` and `npm run control-plane:deploy:dry-run`
+- Local dev: `npm run control-plane:dev` (uses `--env local` + `FLUE_EXECUTION_BASE_URL`)
+
+### Prod durable scan
+
+```bash
+export RESEARCH_CONTROL_PLANE_URL=https://research-control-plane.ihunayamadu.workers.dev
+RESEARCH_SCAN_MODE=durable npm run scan -- --input scan.json
+```
+
+Prod control plane calls Flue via `PUBLICATION_AGENT` service binding — no `FLUE_EXECUTION_BASE_URL`.
 
 ## Failure classes
 
 - `agent_task_timeout`: model decision/finalization timeout (not provider timeout)
 - `provider_outcome_unknown`: committed action with unknown provider outcome; do not silently replay
 - `workflow_interrupted`: resume from last committed workflow step
+- `stale_revision`: checkpoint CAS conflict — retried in `persistCheckpoint` (see issue log ISSUE-001/002)
+
+## Local dev pitfalls
+
+See issue log for full detail. Quick list:
+
+1. Bump `runKey` in `scan.json` before each new durable run.
+2. Control plane port varies (`8787` vs `8788`) — set `RESEARCH_CONTROL_PLANE_URL` explicitly.
+3. After Flue migration tag bumps, clear `agent/.wrangler/state` and restart `npm run dev`.
+4. Do not kill local control-plane wrangler to test durability — workflow orphans (ISSUE-013).
+5. Use `scan.json.example` as template; local `scan.json` is gitignored.

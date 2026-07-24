@@ -78,6 +78,43 @@ describe('durable discovery workflow loop', () => {
 		expect(checkpoint?.revision).toBeGreaterThan(0);
 	});
 
+	it('retries checkpoint persistence after a stale revision conflict', async () => {
+		const repository = createTestRepository();
+		const store = createMarketDiscoveryStore(repository);
+		let intercepted = false;
+		const originalSave = store.saveCheckpoint.bind(store);
+		store.saveCheckpoint = async (checkpoint, expectedRevision) => {
+			if (!intercepted) {
+				intercepted = true;
+				const current = repository.getCheckpoint(checkpoint.runKey, checkpoint.market)!;
+				const bumped = { ...current, revision: current.revision + 1 };
+				repository.compareAndSwapCheckpoint(bumped, current.revision, '2026-07-24T00:00:01Z');
+			}
+			return originalSave(checkpoint, expectedRevision);
+		};
+		const flue: FlueClient = {
+			runDiscoveryDecision: vi.fn().mockResolvedValue({
+				action: { type: 'submit-no-signal', reasonCodes: ['no_primary_signal'] },
+			}),
+			runDiscoveryProviderAction: vi.fn(),
+			runDiscoveryFinalization: vi.fn(),
+			continueMarketIntelligenceScan: vi.fn(),
+		};
+
+		const result = await runMarketDiscoveryLoop({
+			request,
+			market: 'nigeria',
+			workflowInstanceId: 'wf-1',
+			maxRequests: 20,
+			store,
+			flue,
+		});
+
+		expect(result.coverage.status).toBe('no-signals');
+		const checkpoint = repository.getCheckpoint(request.runKey, 'nigeria');
+		expect(checkpoint?.state).toBe('completed-no-signal');
+	});
+
 	it('replays committed provider observations after resume without a second provider call', async () => {
 		const repository = createTestRepository();
 		const store = createMarketDiscoveryStore(repository);

@@ -12,7 +12,10 @@ import {
 } from './research-audit.mjs';
 import {
 	invokeDurableScan,
+	isSuccessfulDurableScanStatus,
+	isTerminalDurableScanStatus,
 	pollDurableScan,
+	resolveDurableScanPollConfig,
 	resolveScanMode,
 } from './lib/durable-research-run-feed.mjs';
 
@@ -37,14 +40,23 @@ export async function watchScan(admission, options = {}) {
 		if (!workflowInstanceId) {
 			throw new Error('Durable workflow admission did not return workflowInstanceId');
 		}
-		for (let attempt = 0; attempt < 120; attempt += 1) {
-			const status = await pollDurableScan(String(workflowInstanceId), options);
-			if (status.status === 'complete' || status.status === 'failed') {
+		const { maxAttempts, pollIntervalMs } = resolveDurableScanPollConfig(options);
+		const poll = options.pollDurableScan ?? pollDurableScan;
+		for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+			const status = await poll(String(workflowInstanceId), options);
+			if (isTerminalDurableScanStatus(status.status)) {
+				if (!isSuccessfulDurableScanStatus(status.status)) {
+					const error = new Error(`Durable scan ended with status: ${status.status}`);
+					error.report = status;
+					throw error;
+				}
 				return { report: status };
 			}
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
 		}
-		throw new Error('Durable scan polling timed out');
+		throw new Error(
+			`Durable scan polling timed out after ${Math.round((maxAttempts * pollIntervalMs) / 1000)}s`,
+		);
 	}
 	const runId = admission.runId ?? admission.id;
 	if (!runId) throw new Error('Workflow admission did not return runId');

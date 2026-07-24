@@ -3,6 +3,8 @@ import { model, researchModelRoles } from '../../models';
 import { briefValidator } from './brief-validator';
 import { briefRefiner } from './brief-refiner';
 import { discoveryResearcherProfiles } from './discovery-orchestrator';
+import { discoveryDecision } from './discovery-decision';
+import { discoveryFinalizer } from './discovery-finalizer';
 import { regionResearcherProfiles } from './region-researcher';
 import { researchReviewer } from './research-reviewer';
 import { structuralAnalyst } from './structural-analyst';
@@ -21,6 +23,8 @@ export function createCoordinatorRuntimeConfig(env: ResearchWorkerEnv) {
 			'Coordinate foundational research pipeline stages. Delegate to subagents; do not publish.',
 		subagents: [
 			...discoveryResearcherProfiles,
+			discoveryDecision,
+			discoveryFinalizer,
 			briefValidator,
 			briefRefiner,
 			...regionResearcherProfiles,

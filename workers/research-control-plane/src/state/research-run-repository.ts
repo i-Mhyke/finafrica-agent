@@ -123,7 +123,7 @@ export class ResearchRunRepository {
 		});
 
 		this.sql.exec(
-			`INSERT INTO market_checkpoints
+			`INSERT OR IGNORE INTO market_checkpoints
 			 (run_key, market, phase, revision, checkpoint_json, terminal_committed, updated_at)
 			 VALUES (?, ?, ?, ?, ?, 0, ?)`,
 			input.runKey,
@@ -134,7 +134,7 @@ export class ResearchRunRepository {
 			input.now,
 		);
 
-		return checkpoint;
+		return this.getCheckpoint(input.runKey, input.market) ?? checkpoint;
 	}
 
 	getCheckpoint(runKey: string, market: Market): DiscoveryMarketCheckpoint | null {

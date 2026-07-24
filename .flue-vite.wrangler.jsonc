@@ -18,6 +18,15 @@
       "new_sqlite_classes": [
         "FlueMarketIntelligenceScanWorkflow"
       ]
+    },
+    {
+      "tag": "v3",
+      "new_sqlite_classes": [
+        "FlueContinueMarketIntelligenceScanWorkflow",
+        "FlueResearchDiscoveryDecisionWorkflow",
+        "FlueResearchDiscoveryFinalizationWorkflow",
+        "FlueResearchDiscoveryProviderActionWorkflow"
+      ]
     }
   ],
   "main": ".flue-vite/_entry.ts",

@@ -26,6 +26,27 @@ export class InMemorySqlClient implements SqlClient {
 			return [];
 		}
 
+		if (normalized.startsWith('INSERT OR IGNORE INTO market_checkpoints')) {
+			const [runKey, market, phase, revision, checkpointJson, , updatedAt] = bindings;
+			const rows = this.table('market_checkpoints');
+			const exists = rows.some(
+				(row) =>
+					row.run_key === runKey && row.market === market && row.phase === phase,
+			);
+			if (!exists) {
+				rows.push({
+					run_key: runKey,
+					market,
+					phase,
+					revision,
+					checkpoint_json: checkpointJson,
+					terminal_committed: 0,
+					updated_at: updatedAt,
+				});
+			}
+			return [];
+		}
+
 		if (normalized.startsWith('INSERT INTO market_checkpoints')) {
 			const [runKey, market, phase, revision, checkpointJson, , updatedAt] = bindings;
 			this.table('market_checkpoints').push({

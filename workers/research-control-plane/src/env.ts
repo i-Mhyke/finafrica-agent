@@ -3,6 +3,7 @@ import { effectiveProviderRequestLimit } from '../../../.flue/research/schemas';
 
 export interface Env {
 	RESEARCH_ADMIN_TOKEN: string;
+	FLUE_EXECUTION_BASE_URL?: string;
 	RESEARCH_RUN_STATE: DurableObjectNamespace;
 	MARKET_INTELLIGENCE_SCAN: Workflow;
 	PUBLICATION_AGENT: Fetcher;
