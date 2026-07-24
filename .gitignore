@@ -7,3 +7,19 @@ dist/
 research-runs/
 *.audit.json.tmp
 *.audit.md.tmp
+
+# Flue/Vite local dev shim (regenerated)
+.flue-vite/
+
+# Local scan input — use scan.json.example
+scan.json
+
+# Stray absolute-path artifacts from local eval runs
+Users/
+
+# Tooling output
+coverage/
+worker-configuration.d.ts
+
+# OS
+.DS_Store

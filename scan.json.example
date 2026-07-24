@@ -1,5 +1,5 @@
 {
-  "runKey": "scan-smoke-2026-07-24-005",
+  "runKey": "scan-example-YYYY-MM-DD-001",
   "trigger": "manual",
   "window": {
     "start": "2026-07-22T00:00:00Z",
