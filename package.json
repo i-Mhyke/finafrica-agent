@@ -21,8 +21,8 @@
 		"eval:research:compare": "node --experimental-strip-types scripts/research-eval.mjs compare",
 		"eval:research:canary": "node --env-file-if-exists=.dev.vars scripts/research-canary.mjs",
 		"control-plane:dev": "wrangler dev --config workers/research-control-plane/wrangler.jsonc --env local --env-file .dev.vars",
-		"control-plane:deploy:dry-run": "wrangler deploy --dry-run --config workers/research-control-plane/wrangler.jsonc --env=\"\"",
-		"control-plane:deploy": "wrangler deploy --config workers/research-control-plane/wrangler.jsonc --env=\"\"",
+		"control-plane:deploy:dry-run": "wrangler deploy --dry-run --config workers/research-control-plane/wrangler.jsonc",
+		"control-plane:deploy": "wrangler deploy --config workers/research-control-plane/wrangler.jsonc"
 	},
 	"dependencies": {
 		"@earendil-works/pi-ai": "0.80.10",
