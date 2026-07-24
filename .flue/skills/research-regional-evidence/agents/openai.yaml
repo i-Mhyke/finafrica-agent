@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Regional Evidence"
+  short_description: "Collect evidence for one article and market"
+  default_prompt: "Use $research-regional-evidence to research one accepted brief in the assigned market."

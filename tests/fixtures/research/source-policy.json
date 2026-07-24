@@ -1,0 +1,23 @@
+{
+	"markets": ["nigeria", "kenya", "ghana", "south-africa", "egypt"],
+	"tier1Examples": {
+		"nigeria": ["cbn.gov.ng", "sec.gov.ng", "ngxgroup.com"],
+		"kenya": ["centralbank.go.ke", "cma.or.ke", "nse.co.ke"],
+		"ghana": ["bog.gov.gh", "sec.gov.gh", "gse.com.gh"],
+		"south-africa": ["resbank.co.za", "fsca.co.za", "jse.co.za"],
+		"egypt": ["cbe.org.eg", "fra.gov.eg", "egx.com.eg"]
+	},
+	"prWireDomains": ["prnewswire.com", "businesswire.com", "globenewswire.com"],
+	"verticals": [
+		"monetary-policy",
+		"banking-regulation",
+		"bank-performance",
+		"capital-markets",
+		"capital-flows",
+		"payments-infrastructure",
+		"identity-fraud-cyber",
+		"open-banking-ai-apis",
+		"fintech-strategy",
+		"human-behaviour-signals"
+	]
+}

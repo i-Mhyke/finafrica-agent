@@ -1,0 +1,70 @@
+{
+	"caseId": "evidence-primary-missing",
+	"caseVersion": 1,
+	"kind": "evidence",
+	"market": "nigeria",
+	"input": {
+		"brief": {
+			"briefId": "brief_accept",
+			"markets": ["nigeria"],
+			"discoverySourceIds": ["src_1"],
+			"evidenceRequirements": [
+				{
+					"requirementId": "req_accept_high",
+					"sourceRule": "primary",
+					"targetDomains": ["cbn.gov.ng"],
+					"anchors": ["15%"]
+				}
+			]
+		},
+		"sourceAudit": {
+			"sources": [
+				{
+					"sourceId": "src_1",
+					"canonicalUrl": "https://cbn.gov.ng/documents/circular-2026",
+					"publisher": "CBN",
+					"market": "nigeria",
+					"tier": 2,
+					"sourceType": "secondary"
+				}
+			],
+			"evidence": [
+				{
+					"evidenceId": "ev_1",
+					"sourceId": "src_1",
+					"text": "Minimum capital adequacy ratio raised to 15%"
+				}
+			],
+			"claims": [
+				{
+					"claimId": "claim_1",
+					"kind": "fact",
+					"materiality": "high",
+					"requirementIds": ["req_accept_high"],
+					"supportingEvidenceIds": ["ev_1"],
+					"status": "supported"
+				}
+			]
+		},
+		"readiness": {
+			"ready": false,
+			"unsupportedMaterialClaimIds": [],
+			"unsubstantiatedMaterialClaimIds": ["claim_1"]
+		},
+		"finalDecision": "NEEDS_MORE_RESEARCH"
+	},
+	"expected": {
+		"unsupportedMaterialClaimIds": [],
+		"unsubstantiatedMaterialClaimIds": ["claim_1"],
+		"readinessReady": false,
+		"materialAnchorCoverage": 1,
+		"primaryRequirementSatisfactionRate": 0,
+		"socialOnlyMaterialSupportCount": 0,
+		"danglingEvidenceReferenceCount": 0,
+		"danglingSourceReferenceCount": 0,
+		"unsupportedMaterialClaimEscapeCount": 0
+	},
+	"rationale": "Tier-2 secondary source cannot satisfy a primary source rule.",
+	"sourceOfTruth": "editor-reviewed",
+	"enforceHardGates": false
+}

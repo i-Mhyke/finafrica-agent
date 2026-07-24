@@ -1,0 +1,51 @@
+{
+	"caseId": "discovery-market-clean",
+	"caseVersion": 1,
+	"kind": "discovery",
+	"market": "nigeria",
+	"input": {
+		"portfolio": {
+			"briefs": [
+				{
+					"briefId": "brief_accept",
+					"markets": ["nigeria"],
+					"discoverySourceIds": ["src_1"],
+					"evidenceRequirements": [
+						{
+							"requirementId": "req_accept_high",
+							"sourceRule": "primary",
+							"targetDomains": ["cbn.gov.ng"],
+							"anchors": ["15%"]
+						}
+					]
+				}
+			],
+			"sources": [
+				{
+					"sourceId": "src_1",
+					"canonicalUrl": "https://cbn.gov.ng/documents/circular-2026",
+					"publisher": "CBN",
+					"market": "nigeria",
+					"tier": 1,
+					"sourceType": "primary"
+				}
+			],
+			"evidence": [
+				{
+					"evidenceId": "ev_1",
+					"sourceId": "src_1",
+					"text": "CBN raised capital requirements to 15%"
+				}
+			]
+		}
+	},
+	"expected": {
+		"relevantBriefIds": ["brief_accept"],
+		"irrelevantBriefIds": [],
+		"expectedMarketSourceIds": ["src_1"],
+		"crossMarketContaminationCount": 0
+	},
+	"rationale": "Clean Nigeria discovery control with one market-matched brief and primary source.",
+	"sourceOfTruth": "editor-reviewed",
+	"enforceHardGates": true
+}

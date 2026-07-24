@@ -1,0 +1,252 @@
+[
+  {
+    "id": "nigeria-regulation",
+    "market": "nigeria",
+    "vertical": "regulation",
+    "query": "Nigeria financial regulation central bank securities commission latest circular",
+    "expectedPrimaryDomains": ["cbn.gov.ng", "sec.gov.ng"],
+    "acceptableSecondaryDomains": ["reuters.com", "businessday.ng"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current rule or regulator notice."
+  },
+  {
+    "id": "nigeria-institutional-performance",
+    "market": "nigeria",
+    "vertical": "institutional-performance",
+    "query": "Nigeria bank financial results institutional performance latest",
+    "expectedPrimaryDomains": ["ngxgroup.com", "ndic.gov.ng"],
+    "acceptableSecondaryDomains": ["reuters.com", "businessday.ng"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find current performance data from an exchange or deposit insurer."
+  },
+  {
+    "id": "nigeria-capital-flows",
+    "market": "nigeria",
+    "vertical": "capital-flows",
+    "query": "Nigeria capital flows foreign portfolio investment latest data",
+    "expectedPrimaryDomains": ["cbn.gov.ng", "nigerianstat.gov.ng"],
+    "acceptableSecondaryDomains": ["reuters.com", "businessday.ng"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current capital-flow data release."
+  },
+  {
+    "id": "nigeria-technology-infrastructure",
+    "market": "nigeria",
+    "vertical": "technology-infrastructure",
+    "query": "Nigeria payments infrastructure fintech central bank latest",
+    "expectedPrimaryDomains": ["cbn.gov.ng", "nibss-plc.com.ng"],
+    "acceptableSecondaryDomains": ["techcabal.com", "businessday.ng"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current payment-system or fintech infrastructure development."
+  },
+  {
+    "id": "nigeria-market-signals",
+    "market": "nigeria",
+    "vertical": "market-signals",
+    "query": "Nigeria stock exchange bond currency market latest data",
+    "expectedPrimaryDomains": ["ngxgroup.com", "fmdqgroup.com"],
+    "acceptableSecondaryDomains": ["reuters.com", "businessday.ng"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current market-price or trading signal."
+  },
+  {
+    "id": "kenya-regulation",
+    "market": "kenya",
+    "vertical": "regulation",
+    "query": "Kenya financial regulation central bank capital markets authority latest notice",
+    "expectedPrimaryDomains": ["centralbank.go.ke", "cma.or.ke"],
+    "acceptableSecondaryDomains": ["reuters.com", "businessdailyafrica.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current rule or regulator notice."
+  },
+  {
+    "id": "kenya-institutional-performance",
+    "market": "kenya",
+    "vertical": "institutional-performance",
+    "query": "Kenya bank financial results institutional performance latest",
+    "expectedPrimaryDomains": ["nse.co.ke", "centralbank.go.ke"],
+    "acceptableSecondaryDomains": ["reuters.com", "businessdailyafrica.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find current performance data from an exchange or central bank."
+  },
+  {
+    "id": "kenya-capital-flows",
+    "market": "kenya",
+    "vertical": "capital-flows",
+    "query": "Kenya capital flows foreign investment latest data",
+    "expectedPrimaryDomains": ["centralbank.go.ke", "knbs.or.ke"],
+    "acceptableSecondaryDomains": ["reuters.com", "businessdailyafrica.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current capital-flow data release."
+  },
+  {
+    "id": "kenya-technology-infrastructure",
+    "market": "kenya",
+    "vertical": "technology-infrastructure",
+    "query": "Kenya payments infrastructure mobile money central bank latest",
+    "expectedPrimaryDomains": ["centralbank.go.ke", "ca.go.ke"],
+    "acceptableSecondaryDomains": ["techcabal.com", "businessdailyafrica.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current payment-system or mobile-money development."
+  },
+  {
+    "id": "kenya-market-signals",
+    "market": "kenya",
+    "vertical": "market-signals",
+    "query": "Kenya securities exchange bond currency market latest data",
+    "expectedPrimaryDomains": ["nse.co.ke", "centralbank.go.ke"],
+    "acceptableSecondaryDomains": ["reuters.com", "businessdailyafrica.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current market-price or trading signal."
+  },
+  {
+    "id": "ghana-regulation",
+    "market": "ghana",
+    "vertical": "regulation",
+    "query": "Ghana financial regulation Bank of Ghana securities commission latest notice",
+    "expectedPrimaryDomains": ["bog.gov.gh", "sec.gov.gh"],
+    "acceptableSecondaryDomains": ["reuters.com", "thebftonline.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current rule or regulator notice."
+  },
+  {
+    "id": "ghana-institutional-performance",
+    "market": "ghana",
+    "vertical": "institutional-performance",
+    "query": "Ghana bank financial results institutional performance latest",
+    "expectedPrimaryDomains": ["gse.com.gh", "bog.gov.gh"],
+    "acceptableSecondaryDomains": ["reuters.com", "thebftonline.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find current performance data from an exchange or central bank."
+  },
+  {
+    "id": "ghana-capital-flows",
+    "market": "ghana",
+    "vertical": "capital-flows",
+    "query": "Ghana capital flows foreign investment latest data",
+    "expectedPrimaryDomains": ["bog.gov.gh", "statsghana.gov.gh"],
+    "acceptableSecondaryDomains": ["reuters.com", "thebftonline.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current capital-flow data release."
+  },
+  {
+    "id": "ghana-technology-infrastructure",
+    "market": "ghana",
+    "vertical": "technology-infrastructure",
+    "query": "Ghana payments infrastructure mobile money central bank latest",
+    "expectedPrimaryDomains": ["bog.gov.gh", "ghipss.net"],
+    "acceptableSecondaryDomains": ["techcabal.com", "thebftonline.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current payment-system or mobile-money development."
+  },
+  {
+    "id": "ghana-market-signals",
+    "market": "ghana",
+    "vertical": "market-signals",
+    "query": "Ghana stock exchange bond currency market latest data",
+    "expectedPrimaryDomains": ["gse.com.gh", "bog.gov.gh"],
+    "acceptableSecondaryDomains": ["reuters.com", "thebftonline.com"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current market-price or trading signal."
+  },
+  {
+    "id": "south-africa-regulation",
+    "market": "south-africa",
+    "vertical": "regulation",
+    "query": "South Africa financial regulation reserve bank FSCA latest notice",
+    "expectedPrimaryDomains": ["resbank.co.za", "fsca.co.za"],
+    "acceptableSecondaryDomains": ["reuters.com", "businesslive.co.za"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current rule or regulator notice."
+  },
+  {
+    "id": "south-africa-institutional-performance",
+    "market": "south-africa",
+    "vertical": "institutional-performance",
+    "query": "South Africa bank financial results institutional performance latest",
+    "expectedPrimaryDomains": ["jse.co.za", "resbank.co.za"],
+    "acceptableSecondaryDomains": ["reuters.com", "businesslive.co.za"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find current performance data from an exchange or central bank."
+  },
+  {
+    "id": "south-africa-capital-flows",
+    "market": "south-africa",
+    "vertical": "capital-flows",
+    "query": "South Africa capital flows foreign investment latest data",
+    "expectedPrimaryDomains": ["resbank.co.za", "statssa.gov.za"],
+    "acceptableSecondaryDomains": ["reuters.com", "businesslive.co.za"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current capital-flow data release."
+  },
+  {
+    "id": "south-africa-technology-infrastructure",
+    "market": "south-africa",
+    "vertical": "technology-infrastructure",
+    "query": "South Africa payments infrastructure fintech reserve bank latest",
+    "expectedPrimaryDomains": ["resbank.co.za", "pasa.org.za"],
+    "acceptableSecondaryDomains": ["techcentral.co.za", "businesslive.co.za"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current payment-system or fintech infrastructure development."
+  },
+  {
+    "id": "south-africa-market-signals",
+    "market": "south-africa",
+    "vertical": "market-signals",
+    "query": "South Africa JSE bond currency market latest data",
+    "expectedPrimaryDomains": ["jse.co.za", "resbank.co.za"],
+    "acceptableSecondaryDomains": ["reuters.com", "businesslive.co.za"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current market-price or trading signal."
+  },
+  {
+    "id": "egypt-regulation",
+    "market": "egypt",
+    "vertical": "regulation",
+    "query": "Egypt financial regulation central bank financial regulatory authority latest notice",
+    "expectedPrimaryDomains": ["cbe.org.eg", "fra.gov.eg"],
+    "acceptableSecondaryDomains": ["reuters.com", "enterprise.news"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current rule or regulator notice."
+  },
+  {
+    "id": "egypt-institutional-performance",
+    "market": "egypt",
+    "vertical": "institutional-performance",
+    "query": "Egypt bank financial results institutional performance latest",
+    "expectedPrimaryDomains": ["egx.com.eg", "cbe.org.eg"],
+    "acceptableSecondaryDomains": ["reuters.com", "enterprise.news"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find current performance data from an exchange or central bank."
+  },
+  {
+    "id": "egypt-capital-flows",
+    "market": "egypt",
+    "vertical": "capital-flows",
+    "query": "Egypt capital flows foreign investment latest data",
+    "expectedPrimaryDomains": ["cbe.org.eg", "capmas.gov.eg"],
+    "acceptableSecondaryDomains": ["reuters.com", "enterprise.news"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current capital-flow data release."
+  },
+  {
+    "id": "egypt-technology-infrastructure",
+    "market": "egypt",
+    "vertical": "technology-infrastructure",
+    "query": "Egypt payments infrastructure fintech central bank latest",
+    "expectedPrimaryDomains": ["cbe.org.eg", "itida.gov.eg"],
+    "acceptableSecondaryDomains": ["wamda.com", "enterprise.news"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current payment-system or fintech infrastructure development."
+  },
+  {
+    "id": "egypt-market-signals",
+    "market": "egypt",
+    "vertical": "market-signals",
+    "query": "Egypt exchange bond currency market latest data",
+    "expectedPrimaryDomains": ["egx.com.eg", "cbe.org.eg"],
+    "acceptableSecondaryDomains": ["reuters.com", "enterprise.news"],
+    "freshnessWindow": {"start": "2026-07-01T00:00:00Z", "end": "2026-07-23T00:00:00Z"},
+    "rationale": "Find a current market-price or trading signal."
+  }
+]

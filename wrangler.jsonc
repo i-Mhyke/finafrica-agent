@@ -1,0 +1,16 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "publication-agent",
+	"compatibility_date": "2026-06-01",
+	"compatibility_flags": ["nodejs_compat"],
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["FlueRegistry", "FlueTranslateWorkflow"],
+		},
+		{
+			"tag": "v2",
+			"new_sqlite_classes": ["FlueMarketIntelligenceScanWorkflow"],
+		},
+	],
+}

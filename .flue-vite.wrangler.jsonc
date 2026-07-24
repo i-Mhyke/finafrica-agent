@@ -1,0 +1,56 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "publication-agent",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "FlueRegistry",
+        "FlueTranslateWorkflow"
+      ]
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": [
+        "FlueMarketIntelligenceScanWorkflow"
+      ]
+    }
+  ],
+  "main": ".flue-vite/_entry.ts",
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "FLUE_CONTINUE_MARKET_INTELLIGENCE_SCAN_WORKFLOW",
+        "class_name": "FlueContinueMarketIntelligenceScanWorkflow"
+      },
+      {
+        "name": "FLUE_MARKET_INTELLIGENCE_SCAN_WORKFLOW",
+        "class_name": "FlueMarketIntelligenceScanWorkflow"
+      },
+      {
+        "name": "FLUE_RESEARCH_DISCOVERY_DECISION_WORKFLOW",
+        "class_name": "FlueResearchDiscoveryDecisionWorkflow"
+      },
+      {
+        "name": "FLUE_RESEARCH_DISCOVERY_FINALIZATION_WORKFLOW",
+        "class_name": "FlueResearchDiscoveryFinalizationWorkflow"
+      },
+      {
+        "name": "FLUE_RESEARCH_DISCOVERY_PROVIDER_ACTION_WORKFLOW",
+        "class_name": "FlueResearchDiscoveryProviderActionWorkflow"
+      },
+      {
+        "name": "FLUE_TRANSLATE_WORKFLOW",
+        "class_name": "FlueTranslateWorkflow"
+      },
+      {
+        "name": "FLUE_REGISTRY",
+        "class_name": "FlueRegistry"
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "evaluatorVersion": 1,
+  "suitePath": "evals/research/cases/suite.json",
+  "caseIds": [
+    "discovery-market-clean",
+    "discovery-cross-market",
+    "evidence-clean",
+    "evidence-anchor-missing",
+    "evidence-primary-missing",
+    "evidence-social-only",
+    "review-false-pass",
+    "efficiency-known-run"
+  ],
+  "caseFileSha256": {
+    "discovery-market-clean.json": "bcce8587d9ca4ada220d3e7e8d3bb5c3957eececc95b38b8d634b42b705bcafa",
+    "discovery-cross-market.json": "3140d4722c89d4cfcb5c7c2baf5e9a16ecd20a38c9d55a3ebaabcd88fbeac21e",
+    "evidence-clean.json": "e0d65db070323fde8534742d5f949dbb98616e2a9822fab5743f2e3ebf9c6b44",
+    "evidence-anchor-missing.json": "9fe7e1cd1bd30a372f808e54abc7a263faf418afd3cb7858e1ea3d88b06aa9a7",
+    "evidence-primary-missing.json": "95d9d12a3fc511aad5aacc4aad008894de1e644333ea9f3a7edd0fed4075e973",
+    "evidence-social-only.json": "e261c803517736167b917d71c27e23b74b6d67d2b43a1501e22a9e085ff40136",
+    "review-false-pass.json": "c76a1f895e2d33e6179a2578ac1e99261e89bde9597c60f94d929c0108bb225b",
+    "efficiency-known-run.json": "55ea37b65097a591ca2099158ce30cc79555b77c8e14ee169d9181eacb7efea1"
+  },
+  "generatedAt": "2026-07-23T23:23:20.236Z"
+}

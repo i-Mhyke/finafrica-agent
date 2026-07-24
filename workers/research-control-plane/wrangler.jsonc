@@ -1,0 +1,34 @@
+{
+	"$schema": "../../../node_modules/wrangler/config-schema.json",
+	"name": "research-control-plane",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-01-15",
+	"compatibility_flags": ["nodejs_compat"],
+	"workflows": [
+		{
+			"binding": "MARKET_INTELLIGENCE_SCAN",
+			"name": "market-intelligence-scan",
+			"class_name": "MarketIntelligenceScanWorkflow"
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "RESEARCH_RUN_STATE",
+				"class_name": "ResearchRunState"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["ResearchRunState"]
+		}
+	],
+	"services": [
+		{
+			"binding": "PUBLICATION_AGENT",
+			"service": "publication-agent"
+		}
+	]
+}

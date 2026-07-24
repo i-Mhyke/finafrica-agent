@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analyze Financial Structure"
+  short_description: "Map evidence into structural financial analysis"
+  default_prompt: "Use $analyze-financial-structure to turn a research packet into a structural analysis packet."

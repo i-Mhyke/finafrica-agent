@@ -1,0 +1,13 @@
+{
+  "runKey": "scan-smoke-2026-07-24-005",
+  "trigger": "manual",
+  "window": {
+    "start": "2026-07-22T00:00:00Z",
+    "end": "2026-07-23T00:00:00Z"
+  },
+  "focus": null,
+  "maxDiscoveredBriefs": 2,
+  "maxAcceptedBriefs": 1,
+  "maxProviderCostUsd": 1,
+  "maxProviderRequests": 40
+}

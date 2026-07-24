@@ -1,0 +1,20 @@
+{
+	"brief_accept": {
+		"briefId": "brief_accept",
+		"briefVersion": "1",
+		"decision": "ACCEPT",
+		"reasons": [],
+		"duplicateOfBriefId": null,
+		"requiredChanges": [],
+		"requestedSourceTargets": []
+	},
+	"brief_reject": {
+		"briefId": "brief_reject",
+		"briefVersion": "1",
+		"decision": "REJECT",
+		"reasons": ["Promotional signal"],
+		"duplicateOfBriefId": null,
+		"requiredChanges": [],
+		"requestedSourceTargets": []
+	}
+}

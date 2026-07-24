@@ -1,0 +1,80 @@
+[
+  {
+    "v": 3,
+    "eventIndex": 0,
+    "timestamp": "2026-07-23T20:29:56.759Z",
+    "type": "run_start",
+    "runId": "run_production_shape",
+    "workflowName": "market-intelligence-scan",
+    "startedAt": "2026-07-23T20:29:56.752Z",
+    "input": { "runKey": "scan-production-shape" }
+  },
+  {
+    "v": 3,
+    "eventIndex": 1,
+    "timestamp": "2026-07-23T20:29:56.794Z",
+    "type": "log",
+    "level": "info",
+    "message": "research.audit",
+    "attributes": {
+      "auditSchemaVersion": "1",
+      "auditEvent": "stage_started",
+      "auditId": "agent-task:scan-production-shape:discovery:nigeria:1",
+      "stageId": "agent-task:scan-production-shape:discovery:nigeria:1",
+      "runKey": "scan-production-shape",
+      "phase": "discovery",
+      "market": "nigeria",
+      "agent": "discovery_nigeria",
+      "modelRole": "discovery",
+      "modelId": "opencode-go/deepseek-v4-flash",
+      "sessionName": "discovery:nigeria",
+      "status": "started",
+      "startedAt": "2026-07-23T20:29:56.794Z"
+    }
+  },
+  {
+    "v": 3,
+    "eventIndex": 2,
+    "timestamp": "2026-07-23T20:30:03.091Z",
+    "type": "turn",
+    "runId": "run_production_shape",
+    "turnId": "turn_1",
+    "purpose": "agent",
+    "durationMs": 2500,
+    "isError": false,
+    "session": "task:discovery:nigeria:conversation-id",
+    "parentSession": "discovery:nigeria",
+    "request": {
+      "providerId": "opencode-go",
+      "providerName": "opencode-go",
+      "requestedModel": "deepseek-v4-flash"
+    },
+    "response": {
+      "usage": {
+        "input": 3317,
+        "output": 91,
+        "cost": { "total": 0.00048986 }
+      }
+    }
+  },
+  {
+    "v": 3,
+    "eventIndex": 3,
+    "timestamp": "2026-07-23T20:40:40.026Z",
+    "type": "run_end",
+    "runId": "run_production_shape",
+    "isError": false,
+    "durationMs": 643274,
+    "result": {
+      "runKey": "scan-production-shape",
+      "status": "partial",
+      "totals": {
+        "discovered": 1,
+        "accepted": 1,
+        "passed": 0,
+        "incomplete": 1,
+        "rejected": 0
+      }
+    }
+  }
+]

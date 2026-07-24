@@ -1,0 +1,4 @@
+interface:
+  display_name: "Validate Research Briefs"
+  short_description: "Accept, refine, or reject one research brief"
+  default_prompt: "Use $validate-research-briefs to assess one evidence-linked article brief."

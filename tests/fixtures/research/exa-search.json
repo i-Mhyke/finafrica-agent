@@ -1,0 +1,13 @@
+{
+	"requestId": "exa-req-001",
+	"costDollars": { "total": 0.005 },
+	"results": [
+		{
+			"url": "https://cbn.gov.ng/documents/circular-2026",
+			"title": "CBN Circular on Capital Requirements",
+			"publishedDate": "2026-07-20T00:00:00Z",
+			"highlights": ["Minimum capital adequacy ratio raised to 15%"],
+			"text": "The Central Bank of Nigeria announced new capital requirements..."
+		}
+	]
+}

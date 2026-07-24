@@ -1,0 +1,22 @@
+{
+	"briefId": "brief_accept",
+	"packetVersion": "v1",
+	"decision": "NEEDS_MORE_RESEARCH",
+	"scores": {
+		"sourceQuality": 2,
+		"decisionRelevance": 2,
+		"factualSupport": 1,
+		"signalStrength": 2,
+		"financialMaterialImpact": 2,
+		"nonPromotionalFilter": 2,
+		"libelAndAllegationRisk": 3,
+		"whyHowDepth": 2,
+		"actionability": 1,
+		"structuralAnalysis": 2,
+		"reporterVsAnalystTest": 2
+	},
+	"reasons": ["Missing primary source"],
+	"missingItems": ["CBN circular full text"],
+	"requestedSourceTargets": ["https://cbn.gov.ng/documents/circular-2026"],
+	"approvedOutputType": null
+}

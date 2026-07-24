@@ -1,0 +1,51 @@
+{
+	"caseId": "discovery-cross-market",
+	"caseVersion": 1,
+	"kind": "discovery",
+	"market": "nigeria",
+	"input": {
+		"portfolio": {
+			"briefs": [
+				{
+					"briefId": "brief_accept",
+					"markets": ["nigeria"],
+					"discoverySourceIds": ["src_1"],
+					"evidenceRequirements": [
+						{
+							"requirementId": "req_accept_high",
+							"sourceRule": "primary",
+							"targetDomains": ["cbn.gov.ng"],
+							"anchors": ["15%"]
+						}
+					]
+				}
+			],
+			"sources": [
+				{
+					"sourceId": "src_1",
+					"canonicalUrl": "https://bog.gov.gh/documents/circular-2026",
+					"publisher": "Bank of Ghana",
+					"market": "ghana",
+					"tier": 1,
+					"sourceType": "primary"
+				}
+			],
+			"evidence": [
+				{
+					"evidenceId": "ev_1",
+					"sourceId": "src_1",
+					"text": "CBN raised capital requirements to 15%"
+				}
+			]
+		}
+	},
+	"expected": {
+		"relevantBriefIds": [],
+		"irrelevantBriefIds": ["brief_accept"],
+		"expectedMarketSourceIds": [],
+		"crossMarketContaminationCount": 1
+	},
+	"rationale": "Ghana source attached to a Nigeria brief should be flagged as cross-market contamination.",
+	"sourceOfTruth": "editor-reviewed",
+	"enforceHardGates": false
+}

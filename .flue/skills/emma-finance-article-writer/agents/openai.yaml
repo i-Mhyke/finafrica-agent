@@ -1,0 +1,4 @@
+interface:
+  display_name: "Emma Finance Article Writer"
+  short_description: "Research-led African finance journalism"
+  default_prompt: "Use $emma-finance-article-writer to turn research materials into a rigorous African finance or technology article."

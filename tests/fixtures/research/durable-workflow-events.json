@@ -1,0 +1,20 @@
+[
+	{
+		"id": "wf-transition-1",
+		"runKey": "scan-durable-1",
+		"workflowInstanceId": "wf-1",
+		"market": "nigeria",
+		"eventType": "checkpoint_saved",
+		"revision": 1,
+		"actionId": null
+	},
+	{
+		"id": "wf-transition-2",
+		"runKey": "scan-durable-1",
+		"workflowInstanceId": "wf-1",
+		"market": "nigeria",
+		"eventType": "provider_observation",
+		"revision": 2,
+		"actionId": "scan-durable-1:nigeria:action:1"
+	}
+]

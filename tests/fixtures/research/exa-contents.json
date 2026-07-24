@@ -1,0 +1,13 @@
+{
+	"requestId": "exa-req-002",
+	"costDollars": { "total": 0.003 },
+	"results": [
+		{
+			"url": "https://cbn.gov.ng/documents/circular-2026",
+			"title": "CBN Circular on Capital Requirements",
+			"publishedDate": "2026-07-20T00:00:00Z",
+			"highlights": ["Minimum capital adequacy ratio raised to 15% effective Q4 2026"],
+			"text": "The Central Bank of Nigeria announced new capital requirements for deposit money banks. The minimum capital adequacy ratio has been raised to 15 percent effective fourth quarter 2026. Banks must submit compliance plans within 90 days. Tier 1 capital definitions remain unchanged. Foreign currency exposures must be reported monthly. Penalties for non-compliance include restrictions on dividend payments and new branch openings."
+		}
+	]
+}

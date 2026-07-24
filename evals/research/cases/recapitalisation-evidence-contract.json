@@ -1,0 +1,164 @@
+{
+	"caseId": "recapitalisation-evidence-contract",
+	"caseVersion": 1,
+	"kind": "evidence",
+	"market": "nigeria",
+	"input": {
+		"brief": {
+			"briefId": "bri_ng_banking_recapitalisation_outcomes_20260722",
+			"markets": ["nigeria"],
+			"discoverySourceIds": ["src_cbn", "src_ndic", "src_sec", "src_press"],
+			"evidenceRequirements": [
+				{
+					"requirementId": "req_cbn_minimum_capital",
+					"sourceRule": "primary",
+					"targetDomains": ["cbn.gov.ng"],
+					"anchors": ["₦500 billion"]
+				},
+				{
+					"requirementId": "req_ndic_revocations",
+					"sourceRule": "primary",
+					"targetDomains": ["ndic.gov.ng"],
+					"anchors": ["revoked"]
+				},
+				{
+					"requirementId": "req_sec_issuance",
+					"sourceRule": "primary",
+					"targetDomains": ["sec.gov.ng"],
+					"anchors": ["rights issue"]
+				},
+				{
+					"requirementId": "req_33_compliance",
+					"sourceRule": "primary",
+					"targetDomains": ["cbn.gov.ng", "ndic.gov.ng"],
+					"anchors": ["33"]
+				},
+				{
+					"requirementId": "req_37_compliance",
+					"sourceRule": "primary",
+					"targetDomains": ["cbn.gov.ng", "ndic.gov.ng"],
+					"anchors": ["37"]
+				}
+			]
+		},
+		"sourceAudit": {
+			"sources": [
+				{
+					"sourceId": "src_cbn",
+					"canonicalUrl": "https://cbn.gov.ng/documents/recapitalisation-2026",
+					"publisher": "CBN",
+					"market": "nigeria",
+					"tier": 1,
+					"sourceType": "primary"
+				},
+				{
+					"sourceId": "src_ndic",
+					"canonicalUrl": "https://ndic.gov.ng/notices/revocation-2026",
+					"publisher": "NDIC",
+					"market": "nigeria",
+					"tier": 1,
+					"sourceType": "primary"
+				},
+				{
+					"sourceId": "src_sec",
+					"canonicalUrl": "https://businessday.ng/sec-rights-issue",
+					"publisher": "BusinessDay",
+					"market": "nigeria",
+					"tier": 2,
+					"sourceType": "secondary"
+				},
+				{
+					"sourceId": "src_press",
+					"canonicalUrl": "https://businessday.ng/banking-recap",
+					"publisher": "BusinessDay",
+					"market": "nigeria",
+					"tier": 2,
+					"sourceType": "secondary"
+				}
+			],
+			"evidence": [
+				{
+					"evidenceId": "ev_cbn",
+					"sourceId": "src_cbn",
+					"text": "Minimum capital requirement raised to ₦500 billion for international banks"
+				},
+				{
+					"evidenceId": "ev_ndic",
+					"sourceId": "src_ndic",
+					"text": "NDIC published a notice on bank resolution proceedings"
+				},
+				{
+					"evidenceId": "ev_sec",
+					"sourceId": "src_sec",
+					"text": "A rights issue programme was reported for recapitalisation"
+				},
+				{
+					"evidenceId": "ev_33",
+					"sourceId": "src_cbn",
+					"text": "Banks raised ₦4.65 trillion in recapitalisation"
+				}
+			],
+			"claims": [
+				{
+					"claimId": "claim_cbn",
+					"kind": "fact",
+					"materiality": "high",
+					"requirementIds": ["req_cbn_minimum_capital"],
+					"supportingEvidenceIds": ["ev_cbn"],
+					"status": "supported"
+				},
+				{
+					"claimId": "claim_ndic",
+					"kind": "fact",
+					"materiality": "high",
+					"requirementIds": ["req_ndic_revocations"],
+					"supportingEvidenceIds": ["ev_ndic"],
+					"status": "supported"
+				},
+				{
+					"claimId": "claim_sec",
+					"kind": "fact",
+					"materiality": "high",
+					"requirementIds": ["req_sec_issuance"],
+					"supportingEvidenceIds": ["ev_sec"],
+					"status": "supported"
+				},
+				{
+					"claimId": "claim_33",
+					"kind": "fact",
+					"materiality": "high",
+					"requirementIds": ["req_33_compliance"],
+					"supportingEvidenceIds": ["ev_33"],
+					"status": "supported"
+				}
+			]
+		},
+		"readiness": {
+			"ready": false,
+			"unsupportedMaterialClaimIds": [],
+			"unsubstantiatedMaterialClaimIds": []
+		},
+		"finalDecision": "NEEDS_MORE_RESEARCH"
+	},
+	"expected": {
+		"unsupportedMaterialClaimIds": [],
+		"unsubstantiatedMaterialClaimIds": [],
+		"readinessReady": false,
+		"materialAnchorCoverage": 0.4,
+		"primaryRequirementSatisfactionRate": 0.6,
+		"socialOnlyMaterialSupportCount": 0,
+		"danglingEvidenceReferenceCount": 0,
+		"danglingSourceReferenceCount": 0,
+		"unsupportedMaterialClaimEscapeCount": 0,
+		"requirementStates": {
+			"req_cbn_minimum_capital": "satisfied",
+			"req_ndic_revocations": "weak",
+			"req_sec_issuance": "weak",
+			"req_33_compliance": "weak",
+			"req_37_compliance": "missing"
+		}
+	},
+	"rationale": "Before-state recapitalisation contract from run_01KY9TQT4SAPHE0DAWE1HEJ8RS: only CBN is fully anchored on a primary source; NDIC, SEC, and 33 remain weak and 37 is missing.",
+	"sourceOfTruth": "editor-reviewed",
+	"enforceHardGates": true
+}

@@ -1,0 +1,18 @@
+{
+  "date": "2026-07-23",
+  "discoveryCases": 25,
+  "extractionCases": 20,
+  "exaApiKeyPresent": false,
+  "apifyTokenPresent": false,
+  "metrics": {
+    "exaDiscoveryRecallByMarket": "not measured",
+    "exaExtractionAttribution": "not measured",
+    "apifyFallbackRecovery": "insufficient fallback cases",
+    "apifyP95CostUsd": "not measured"
+  },
+  "gates": {
+    "exaDiscovery": "not measured (no API key)",
+    "exaExtraction": "not measured (no API key)",
+    "apifyFallback": "APIFY_FALLBACK_ENABLED=false (benchmark gate pending)"
+  }
+}

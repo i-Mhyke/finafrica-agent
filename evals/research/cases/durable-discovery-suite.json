@@ -1,0 +1,16 @@
+{
+	"id": "durable-discovery-suite",
+	"description": "Trajectory checks for durable discovery control",
+	"cases": [
+		{
+			"id": "terminal-no-signal",
+			"fixture": "durable-workflow-events",
+			"expect": { "terminalState": "completed-no-signal" }
+		},
+		{
+			"id": "provider-replay",
+			"fixture": "durable-workflow-events",
+			"expect": { "duplicateProviderCalls": 0 }
+		}
+	]
+}

@@ -1,0 +1,22 @@
+{
+	"briefId": "brief_accept",
+	"packetVersion": "v1",
+	"decision": "PASS",
+	"scores": {
+		"sourceQuality": 3,
+		"decisionRelevance": 3,
+		"factualSupport": 3,
+		"signalStrength": 3,
+		"financialMaterialImpact": 3,
+		"nonPromotionalFilter": 3,
+		"libelAndAllegationRisk": 3,
+		"whyHowDepth": 3,
+		"actionability": 3,
+		"structuralAnalysis": 3,
+		"reporterVsAnalystTest": 3
+	},
+	"reasons": [],
+	"missingItems": [],
+	"requestedSourceTargets": [],
+	"approvedOutputType": "policy explainer"
+}

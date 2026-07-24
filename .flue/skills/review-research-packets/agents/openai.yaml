@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Research Packets"
+  short_description: "Grade research packets against publication gates"
+  default_prompt: "Use $review-research-packets to grade one research packet and return a gate decision."

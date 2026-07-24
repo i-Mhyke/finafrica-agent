@@ -1,0 +1,93 @@
+{
+	"runKey": "scan-fixture",
+	"coverage": [
+		{ "market": "nigeria", "searchesPerformed": 3, "signalsFound": 1, "sourceIds": ["src_1"], "status": "covered" },
+		{ "market": "kenya", "searchesPerformed": 2, "signalsFound": 0, "sourceIds": [], "status": "no-signals" },
+		{ "market": "ghana", "searchesPerformed": 2, "signalsFound": 0, "sourceIds": [], "status": "no-signals" },
+		{ "market": "south-africa", "searchesPerformed": 2, "signalsFound": 0, "sourceIds": [], "status": "no-signals" },
+		{ "market": "egypt", "searchesPerformed": 2, "signalsFound": 0, "sourceIds": [], "status": "no-signals" }
+	],
+	"receipts": [],
+	"sources": [
+		{
+			"sourceId": "src_1",
+			"canonicalUrl": "https://cbn.gov.ng/documents/circular-2026",
+			"title": "CBN Circular",
+			"publisher": "CBN",
+			"author": null,
+			"publishedAt": "2026-07-20T00:00:00Z",
+			"retrievedAt": "2026-07-23T00:00:00Z",
+			"market": "nigeria",
+			"tier": 1,
+			"sourceType": "primary",
+			"receiptIds": [],
+			"contentHash": null,
+			"rightsNote": null
+		}
+	],
+	"evidence": [
+		{
+			"evidenceId": "ev_1",
+			"sourceId": "src_1",
+			"text": "CBN raised capital requirements",
+			"supports": [],
+			"capturedAt": "2026-07-23T00:00:00Z"
+		}
+	],
+	"briefs": [
+		{
+			"briefId": "brief_accept",
+			"workingTitle": "Nigeria Capital Requirements",
+			"thesis": "CBN raised CAR",
+			"signalSummary": "New circular",
+			"markets": ["nigeria"],
+			"verticals": ["banking-regulation"],
+			"discoverySourceIds": ["src_1"],
+			"discoveryEvidenceIds": ["ev_1"],
+			"decisionRelevance": "High",
+			"initialQuestions": ["What is the new CAR?"],
+			"primarySourceTargets": ["cbn.gov.ng"],
+			"secondarySourceTargets": [],
+			"exclusions": [],
+			"evidenceRequirements": [
+				{
+					"requirementId": "req_accept_high",
+					"market": "nigeria",
+					"question": "What is the new minimum capital adequacy ratio?",
+					"materiality": "high",
+					"sourceRule": "primary",
+					"targetDomains": ["cbn.gov.ng"],
+					"anchors": ["15%"],
+					"recencyRule": "none"
+				}
+			]
+		},
+		{
+			"briefId": "brief_reject",
+			"workingTitle": "Routine PR Launch",
+			"thesis": "Company launched app",
+			"signalSummary": "PR",
+			"markets": ["nigeria"],
+			"verticals": ["fintech-strategy"],
+			"discoverySourceIds": ["src_1"],
+			"discoveryEvidenceIds": ["ev_1"],
+			"decisionRelevance": "Low",
+			"initialQuestions": [],
+			"primarySourceTargets": [],
+			"secondarySourceTargets": [],
+			"exclusions": [],
+			"evidenceRequirements": [
+				{
+					"requirementId": "req_reject_high",
+					"market": "nigeria",
+					"question": "What product did the company launch?",
+					"materiality": "high",
+					"sourceRule": "primary",
+					"targetDomains": ["cbn.gov.ng"],
+					"anchors": ["app"],
+					"recencyRule": "none"
+				}
+			]
+		}
+	]
+}

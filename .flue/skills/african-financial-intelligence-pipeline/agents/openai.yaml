@@ -1,0 +1,4 @@
+interface:
+  display_name: "African Financial Intelligence Pipeline"
+  short_description: "Source-gated African finance research"
+  default_prompt: "Use $african-financial-intelligence-pipeline to find, review, write, and publish decision-relevant African financial intelligence."

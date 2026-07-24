@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scan Market Signals"
+  short_description: "Find time-bounded signals across assigned markets"
+  default_prompt: "Use $scan-market-signals to scan assigned markets and return evidence-linked article briefs."

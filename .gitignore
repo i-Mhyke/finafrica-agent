@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.dev.vars*
+.env*
+.wrangler/
+*.log
+research-runs/
+*.audit.json.tmp
+*.audit.md.tmp

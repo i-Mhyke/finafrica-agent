@@ -1,0 +1,59 @@
+{
+	"caseId": "review-false-pass",
+	"caseVersion": 1,
+	"kind": "review",
+	"market": "nigeria",
+	"input": {
+		"readiness": {
+			"ready": false,
+			"unsupportedMaterialClaimIds": ["claim_1"],
+			"unsubstantiatedMaterialClaimIds": []
+		},
+		"structuralPacket": {
+			"packetVersion": "v1",
+			"editorsQuestions": [
+				{ "question": "Q1?" },
+				{ "question": "Q2?" },
+				{ "question": "Q3?" },
+				{ "question": "Q4?" },
+				{ "question": "Q5?" },
+				{ "question": "Q6?" },
+				{ "question": "Q7?" },
+				{ "question": "Q8?" },
+				{ "question": "Q9?" },
+				{ "question": "Q10?" }
+			],
+			"storyOptions": [
+				{ "title": "A" },
+				{ "title": "B" },
+				{ "title": "C" }
+			],
+			"analysisLayers": {
+				"layer1WhatChanged": "CAR raised",
+				"layer2IsNew": "Yes",
+				"layer3WhoLoses": "Undercapitalized banks",
+				"layer4PricingPower": "Large banks",
+				"layer5StackCollapse": "None",
+				"layer6InstitutionalPower": "CBN",
+				"layer7WhatBecomesPossible": "Consolidation"
+			}
+		},
+		"review": {
+			"packetVersion": "v1",
+			"decision": "PASS",
+			"scores": {
+				"sourceQuality": 3,
+				"factualSupport": 3,
+				"structuralAnalysis": 3,
+				"reporterVsAnalystTest": 3,
+				"libelAndAllegationRisk": 3
+			}
+		}
+	},
+	"expected": {
+		"publicationEligible": false
+	},
+	"rationale": "Reviewer PASS with blocked readiness must not be publication eligible.",
+	"sourceOfTruth": "editor-reviewed",
+	"enforceHardGates": false
+}

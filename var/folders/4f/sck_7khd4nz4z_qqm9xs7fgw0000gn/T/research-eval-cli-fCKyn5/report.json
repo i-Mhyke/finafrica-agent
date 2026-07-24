@@ -1,0 +1,172 @@
+{
+  "evaluatorVersion": 1,
+  "generatedAt": "2026-07-23T23:23:03.295Z",
+  "suitePath": "evals/research/cases/suite.json",
+  "cases": [
+    {
+      "caseId": "discovery-market-clean",
+      "kind": "discovery",
+      "passed": true,
+      "failures": [],
+      "observations": [],
+      "metrics": {
+        "candidatePrecision": 1,
+        "marketSpecificSourceRate": 1,
+        "primarySourceHitRate": 1,
+        "crossMarketContaminationCount": 0,
+        "discoveredBriefCount": 1,
+        "relevantBriefCount": 1,
+        "retainedSourceCount": 1
+      }
+    },
+    {
+      "caseId": "discovery-cross-market",
+      "kind": "discovery",
+      "passed": true,
+      "failures": [],
+      "observations": [
+        "cross_market_contamination"
+      ],
+      "metrics": {
+        "candidatePrecision": 0,
+        "marketSpecificSourceRate": 0,
+        "primarySourceHitRate": 0,
+        "crossMarketContaminationCount": 3,
+        "discoveredBriefCount": 1,
+        "relevantBriefCount": 0,
+        "retainedSourceCount": 1
+      }
+    },
+    {
+      "caseId": "evidence-clean",
+      "kind": "evidence",
+      "passed": true,
+      "failures": [],
+      "observations": [],
+      "metrics": {
+        "materialClaimSupportRate": 1,
+        "materialAnchorCoverage": 1,
+        "primaryRequirementSatisfactionRate": 1,
+        "socialOnlyMaterialSupportCount": 0,
+        "danglingEvidenceReferenceCount": 0,
+        "danglingSourceReferenceCount": 0,
+        "unsupportedMaterialClaimEscapeCount": 0
+      }
+    },
+    {
+      "caseId": "evidence-anchor-missing",
+      "kind": "evidence",
+      "passed": true,
+      "failures": [],
+      "observations": [
+        "material_anchor_missing"
+      ],
+      "metrics": {
+        "materialClaimSupportRate": 1,
+        "materialAnchorCoverage": 0,
+        "primaryRequirementSatisfactionRate": 1,
+        "socialOnlyMaterialSupportCount": 0,
+        "danglingEvidenceReferenceCount": 0,
+        "danglingSourceReferenceCount": 0,
+        "unsupportedMaterialClaimEscapeCount": 0
+      }
+    },
+    {
+      "caseId": "evidence-primary-missing",
+      "kind": "evidence",
+      "passed": true,
+      "failures": [],
+      "observations": [
+        "primary_source_rule_failed"
+      ],
+      "metrics": {
+        "materialClaimSupportRate": 1,
+        "materialAnchorCoverage": 1,
+        "primaryRequirementSatisfactionRate": 0,
+        "socialOnlyMaterialSupportCount": 0,
+        "danglingEvidenceReferenceCount": 0,
+        "danglingSourceReferenceCount": 0,
+        "unsupportedMaterialClaimEscapeCount": 0
+      }
+    },
+    {
+      "caseId": "evidence-social-only",
+      "kind": "evidence",
+      "passed": true,
+      "failures": [],
+      "observations": [
+        "primary_source_rule_failed",
+        "social_only_material_support"
+      ],
+      "metrics": {
+        "materialClaimSupportRate": 1,
+        "materialAnchorCoverage": 1,
+        "primaryRequirementSatisfactionRate": 0,
+        "socialOnlyMaterialSupportCount": 1,
+        "danglingEvidenceReferenceCount": 0,
+        "danglingSourceReferenceCount": 0,
+        "unsupportedMaterialClaimEscapeCount": 0
+      }
+    },
+    {
+      "caseId": "review-false-pass",
+      "kind": "review",
+      "passed": true,
+      "failures": [],
+      "observations": [
+        "review_pass_with_readiness_blocked"
+      ],
+      "metrics": {
+        "publicationEligible": 0
+      }
+    },
+    {
+      "caseId": "efficiency-known-run",
+      "kind": "efficiency",
+      "passed": true,
+      "failures": [],
+      "observations": [],
+      "metrics": {
+        "providerAttemptCount": 25,
+        "providerFailureCount": 0,
+        "providerCostUsd": 0.09100000000000003,
+        "llmInputTokens": 176557,
+        "llmOutputTokens": 59593,
+        "llmCostUsd": 0.16036419200000002,
+        "maxStructuralAnalysisCallsPerArticle": 1,
+        "maxResearchReviewCallsPerArticle": 1,
+        "discoverySearchesNigeria": 2,
+        "discoverySearchesGhana": 2
+      }
+    }
+  ],
+  "metrics": {
+    "candidatePrecision": 1,
+    "marketSpecificSourceRate": 1,
+    "primarySourceHitRate": 1,
+    "crossMarketContaminationCount": 3,
+    "discoveredBriefCount": 2,
+    "relevantBriefCount": 1,
+    "retainedSourceCount": 2,
+    "materialClaimSupportRate": 4,
+    "materialAnchorCoverage": 3,
+    "primaryRequirementSatisfactionRate": 2,
+    "socialOnlyMaterialSupportCount": 1,
+    "danglingEvidenceReferenceCount": 0,
+    "danglingSourceReferenceCount": 0,
+    "unsupportedMaterialClaimEscapeCount": 0,
+    "publicationEligible": 0,
+    "providerAttemptCount": 25,
+    "providerFailureCount": 0,
+    "providerCostUsd": 0.09100000000000003,
+    "llmInputTokens": 176557,
+    "llmOutputTokens": 59593,
+    "llmCostUsd": 0.16036419200000002,
+    "maxStructuralAnalysisCallsPerArticle": 1,
+    "maxResearchReviewCallsPerArticle": 1,
+    "discoverySearchesNigeria": 2,
+    "discoverySearchesGhana": 2
+  },
+  "hardGateFailures": [],
+  "passed": true
+}

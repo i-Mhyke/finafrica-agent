@@ -1,0 +1,15 @@
+{
+	"suiteVersion": 1,
+	"cases": [
+		"discovery-market-clean.json",
+		"discovery-cross-market.json",
+		"evidence-clean.json",
+		"evidence-anchor-missing.json",
+		"evidence-primary-missing.json",
+		"evidence-social-only.json",
+		"review-false-pass.json",
+		"efficiency-known-run.json",
+		"recapitalisation-evidence-contract.json",
+		"recapitalisation-evidence-corrected.json"
+	]
+}

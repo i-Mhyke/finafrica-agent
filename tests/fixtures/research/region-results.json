@@ -1,0 +1,93 @@
+[
+	{
+		"briefId": "brief_1",
+		"market": "nigeria",
+		"status": "complete",
+		"receipts": [
+			{
+				"receiptId": "rcpt_1",
+				"callKey": "call_1",
+				"provider": "exa",
+				"providerRequestId": "exa-1",
+				"operation": "fetch",
+				"mode": "highlights",
+				"phase": "deep-research",
+				"briefId": "brief_1",
+				"market": "nigeria",
+				"query": null,
+				"requestedUrls": ["https://cbn.gov.ng/documents/circular-2026"],
+				"sourceTier": 1,
+				"requestedAt": "2026-07-23T00:00:00Z",
+				"completedAt": "2026-07-23T00:00:01Z",
+				"resultUrls": ["https://cbn.gov.ng/documents/circular-2026"],
+				"costUsd": 0.02,
+				"latencyMs": 500,
+				"status": "succeeded",
+				"fallbackReason": null,
+				"usage": { "computeUnits": null, "externalTransferGbytes": null, "proxySerps": null }
+			},
+			{
+				"receiptId": "rcpt_2",
+				"callKey": "call_2",
+				"provider": "exa",
+				"providerRequestId": "exa-2",
+				"operation": "fetch",
+				"mode": "highlights",
+				"phase": "deep-research",
+				"briefId": "brief_1",
+				"market": "nigeria",
+				"query": null,
+				"requestedUrls": ["https://cbn.gov.ng/documents/circular-2026/"],
+				"sourceTier": 1,
+				"requestedAt": "2026-07-23T00:00:02Z",
+				"completedAt": "2026-07-23T00:00:03Z",
+				"resultUrls": ["https://cbn.gov.ng/documents/circular-2026"],
+				"costUsd": 0.02,
+				"latencyMs": 400,
+				"status": "succeeded",
+				"fallbackReason": null,
+				"usage": { "computeUnits": null, "externalTransferGbytes": null, "proxySerps": null }
+			}
+		],
+		"sources": [
+			{
+				"sourceId": "src_1",
+				"canonicalUrl": "https://cbn.gov.ng/documents/circular-2026",
+				"title": "CBN Circular",
+				"publisher": "CBN",
+				"author": null,
+				"publishedAt": "2026-07-20T00:00:00Z",
+				"retrievedAt": "2026-07-23T00:00:00Z",
+				"market": "nigeria",
+				"tier": 1,
+				"sourceType": "primary",
+				"receiptIds": ["rcpt_1", "rcpt_2"],
+				"contentHash": "abc123",
+				"rightsNote": null
+			}
+		],
+		"evidence": [
+			{
+				"evidenceId": "ev_1",
+				"sourceId": "src_1",
+				"text": "Minimum capital adequacy ratio raised to 15%",
+				"supports": ["claim_1"],
+				"capturedAt": "2026-07-23T00:00:00Z"
+			}
+		],
+		"claims": [
+			{
+				"claimId": "claim_1",
+				"statement": "CBN raised CAR to 15%",
+				"kind": "fact",
+				"materiality": "high",
+				"requirementIds": ["req_accept_high"],
+				"supportingEvidenceIds": ["ev_1"],
+				"contradictingEvidenceIds": [],
+				"status": "supported"
+			}
+		],
+		"gaps": [],
+		"error": null
+	}
+]
