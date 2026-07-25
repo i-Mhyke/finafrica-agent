@@ -212,6 +212,7 @@ Service-binding path verified (no `FLUE_EXECUTION_BASE_URL` on control plane).
 | Run | runKey | workflowInstanceId | Injection | Result | Wall time |
 |-----|--------|-------------------|-----------|--------|-----------|
 | prod durability | `scan-prod-durability-2026-07-24-002` | `6226e4bf-8101-457d-80b0-7ecc4f6dac29` | CP redeploy @ poll 20 (~43s) | `complete` | ~3m17s |
+| prod durability (post write-amp) | `scan-prod-durability-2026-07-25-003` | `23853027-6bb1-4cfd-bab0-27202b5fdbc7` | CP redeploy @ poll 20 (~42s) | `complete` | ~9m34s |
 
 ---
 

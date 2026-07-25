@@ -15,7 +15,7 @@ if (!token) {
 }
 
 const input = {
-	runKey: `scan-prod-durability-${new Date().toISOString().slice(0, 10)}-002`,
+	runKey: `scan-prod-durability-${new Date().toISOString().slice(0, 10)}-003`,
 	trigger: 'manual',
 	window: {
 		start: '2026-07-22T00:00:00Z',
