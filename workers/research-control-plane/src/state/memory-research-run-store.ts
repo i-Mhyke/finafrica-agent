@@ -128,10 +128,6 @@ export class InMemorySqlClient implements SqlClient {
 			return [];
 		}
 
-		if (normalized.startsWith('SELECT changes()')) {
-			return [{ changes: this.lastChanges }] as unknown as T[];
-		}
-
 		if (normalized.startsWith('SELECT action_id FROM provider_reservations')) {
 			const [runKey, market, phase, actionId] = bindings;
 			return this.table('provider_reservations')
